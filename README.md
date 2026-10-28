@@ -12,6 +12,12 @@ Jeu Bomberman multijoueur jouable uniquement en ligne. Un compte est nécessaire
 
 ## Installation
 
+0. **Mettez vous dans le dossier bomberman**
+
+    ```bash
+    cd bomberman
+    ```
+
 1. **Installer les dépendances**
 
    ```bash
