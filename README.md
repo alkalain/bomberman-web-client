@@ -21,7 +21,7 @@ Jeu Bomberman multijoueur jouable uniquement en ligne. Un compte est nécessaire
 2. **Configurer les variables d'environnement**
 
    ```bash
-   cp .env.example .env
+   cp .env.exemple .env
    ```
 
    Puis ouvrir `.env` et renseigner les valeurs :
