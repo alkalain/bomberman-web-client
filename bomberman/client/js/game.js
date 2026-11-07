@@ -96,12 +96,51 @@ canvas.addEventListener("click", e => {
 
 // ---------- Mise à jour du jeu ----------
 function updateJeu() {
+  let dx = 0;
+  let dy = 0;
   let dir = null;
 
-  if (touches["ArrowRight"])     { perso.x += perso.vitesse; dir = "droite"; }
-  else if (touches["ArrowLeft"]) { perso.x -= perso.vitesse; dir = "gauche"; }
-  else if (touches["ArrowUp"])   { perso.y -= perso.vitesse; dir = "haut"; }
-  else if (touches["ArrowDown"]) { perso.y += perso.vitesse; dir = "bas"; }
+  if (touches["ArrowRight"]) {
+    dx = perso.vitesse;
+    dir = "droite";
+  } else if (touches["ArrowLeft"]) {
+    dx = -perso.vitesse;
+    dir = "gauche";
+  } else if (touches["ArrowUp"]) {
+    dy = -perso.vitesse;
+    dir = "haut";
+  } else if (touches["ArrowDown"]) {
+    dy = perso.vitesse;
+    dir = "bas";
+  }
+
+  // ---------- Hitbox ----------
+  function canMoveTo(x, y) {
+      const left = x + 8;
+      const right = x + 8 + 24 - 1;
+      const top = y + 8;
+      const bottom = y + 8 + 24 - 1;
+
+      return !(
+        isBlockedAtPixel(left, top) ||
+        isBlockedAtPixel(right, top) ||
+        isBlockedAtPixel(left, bottom) ||
+        isBlockedAtPixel(right, bottom)
+      );
+  }
+
+  const oldX = perso.x;
+  const oldY = perso.y;
+
+  // Check each axis separately to allow sliding along walls.
+  if (dx !== 0 && canMoveTo(perso.x + dx, perso.y)) {
+    perso.x += dx;
+  }
+  if (dy !== 0 && canMoveTo(perso.x, perso.y + dy)) {
+    perso.y += dy;
+  }
+
+  const moved = perso.x !== oldX || perso.y !== oldY;
 
   if (dir) {
     if (dir !== perso.direction) {
@@ -109,10 +148,16 @@ function updateJeu() {
       perso.frame = 0;
       perso.compteur = 0;
     }
-    perso.compteur++;
-    if (perso.compteur >= perso.vitesseAnim) {
+
+    if (moved) {
+      perso.compteur++;
+      if (perso.compteur >= perso.vitesseAnim) {
+        perso.compteur = 0;
+        perso.frame = (perso.frame + 1) % 2;
+      }
+    } else {
+      perso.frame = 0;
       perso.compteur = 0;
-      perso.frame = (perso.frame + 1) % 2;
     }
   } else {
     perso.frame = 0;
