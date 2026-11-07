@@ -1,0 +1,8 @@
+#game-container{
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+#game{
+    width: 50%;
+}
