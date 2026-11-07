@@ -49,6 +49,11 @@ const perso = {
 
 function demarrerJeu() {
   perso.couleur = couleurs[choix];
+
+  const spawn = getSpawnPosition(0);
+  perso.x = spawn.x;
+  perso.y = spawn.y;
+
   perso.direction = "bas";
   perso.frame = 0;
   perso.compteur = 0;
