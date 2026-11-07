@@ -1,6 +1,11 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
+// ---------- Dimentions ----------
+const LARGEUR = canvas.width;
+const HAUTEUR = canvas.height;
+canvas.height = LARGEUR/4*3;
+
 // ---------- Chargement des images ----------
 const couleurs = ["bleu", "vert", "rouge", "rose", "jaune"];
 const directions = ["droite", "gauche", "haut", "bas"];
@@ -154,6 +159,7 @@ function drawSelection() {
 }
 
 function drawJeu() {
+  drawMap(ctx);
   const img = sprites[perso.couleur][perso.direction][perso.frame];
   ctx.drawImage(img, perso.x, perso.y);
 }
