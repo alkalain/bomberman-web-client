@@ -51,6 +51,31 @@ function getSpawnPosition(playerIndex = 0) {
   };
 }
 
+// Keep each spawn tile and its surrounding 3x3 area clear.
+const protectedSpawnTiles = new Set();
+
+for (const spawn of SPAWN_TILES) {
+  for (let dy = -1; dy <= 1; dy++) {
+    for (let dx = -1; dx <= 1; dx++) {
+      protectedSpawnTiles.add(`${spawn.x + dx},${spawn.y + dy}`);
+    }
+  }
+}
+
+// Place destructible walls on some remaining floor tiles.
+const DESTRUCTIBLE_WALL_CHANCE = 0.5; // 50% chance per eligible tile
+
+for (let y = 1; y < MAP_HEIGHT - 1; y++) {
+  for (let x = 1; x < MAP_WIDTH - 1; x++) {
+    const isNearSpawn = protectedSpawnTiles.has(`${x},${y}`);
+
+    if (map[y][x] === 0 && !isNearSpawn &&
+        Math.random() < DESTRUCTIBLE_WALL_CHANCE) {
+      map[y][x] = 2;
+    }
+  }
+}
+
 function isBlockedAtPixel(x, y) {
   const tileX = Math.floor(x / TILE_SIZE);
   const tileY = Math.floor(y / TILE_SIZE);
