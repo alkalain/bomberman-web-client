@@ -17,6 +17,7 @@ class Bomb {
     this.etat = "normale";    // "normale" -> "allumee" -> "explosion"
     this.cases = [];          // cases touchées (remplies à l'explosion)
     this.debutExplosion = 0;
+    this.solide = false;   // pas solide au début : le joueur est dessus et doit pouvoir sortir
   }
 
   // Appelée à chaque frame. Renvoie true UNIQUEMENT au moment où elle explose.
@@ -27,6 +28,7 @@ class Bomb {
 
     if (age >= BOMB_DELAI_EXPLOSION) {
       this.etat = "explosion";
+      this.solide = false;          
       this.debutExplosion = now;
       this.cases = this.calculerExplosion();
       return true;
