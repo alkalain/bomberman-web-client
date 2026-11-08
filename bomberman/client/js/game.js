@@ -4,7 +4,7 @@ const ctx = canvas.getContext("2d");
 // ---------- Dimentions ----------
 const LARGEUR = canvas.width;
 const HAUTEUR = canvas.height;
-canvas.height = LARGEUR/4*3;
+canvas.height = LARGEUR/100*86;
 
 // ---------- Chargement des images ----------
 const couleurs = ["bleu", "vert", "rouge", "rose", "jaune"];

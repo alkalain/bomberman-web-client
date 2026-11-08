@@ -1,6 +1,6 @@
-const TILE_SIZE = 40;
-const MAP_WIDTH = 20;
-const MAP_HEIGHT = 15;
+const TILE_SIZE = 790/15;
+const MAP_WIDTH = 15;
+const MAP_HEIGHT = 13;
 
 const SPAWN_TILES = [
   { x: 1, y: 1 },                       // top-left
