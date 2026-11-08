@@ -1,5 +1,6 @@
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
+ctx.imageSmoothingEnabled = false; // pour un rendu pixel-art
 
 // ---------- Dimentions ----------
 const LARGEUR = canvas.width;
