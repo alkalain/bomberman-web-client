@@ -9,6 +9,11 @@ const SPAWN_TILES = [
   { x: MAP_WIDTH - 2, y: MAP_HEIGHT - 2 } // bottom-right
 ];
 
+// ajout d'une image pour les blocs cassables
+const imgBloc = new Image();
+imgBloc.src = "img/map/bloc.png";
+imgBloc.onerror = () => console.error("Image introuvable : " + imgBloc.src);
+
 // 0 = floor, 1 = solid wall, 2 = breakable block
 const map = Array.from({ length: MAP_HEIGHT }, (_, y) =>
   Array.from({ length: MAP_WIDTH }, (_, x) =>
@@ -30,13 +35,25 @@ for (let y = 1; y < MAP_HEIGHT - 1; y++) {
 function drawMap(ctx) {
   map.forEach((row, y) => {
     row.forEach((tile, x) => {
-      ctx.fillStyle = tile === 1 ? "#444" : tile === 2 ? "#9b5b2e" : "#75a843";
-      ctx.fillRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      const px = x * TILE_SIZE;
+      const py = y * TILE_SIZE;
+
+      // 1. Le sol est dessiné sous toutes les cases
+      ctx.fillStyle = "#75a843";
+      ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+
+      // 2. Puis l'élément par-dessus
+      if (tile === 1) {
+        ctx.fillStyle = "#444";
+        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+      } else if (tile === 2) {
+        ctx.drawImage(imgBloc, px, py, TILE_SIZE, TILE_SIZE);
+      }
+
       ctx.strokeStyle = "#333";
-      ctx.strokeRect(x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+      ctx.strokeRect(px, py, TILE_SIZE, TILE_SIZE);
     });
   });
-
 }
 
 function getSpawnPosition(playerIndex = 0) {
