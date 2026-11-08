@@ -30,6 +30,11 @@ for (const c of couleurs) {
   apercus[c] = [1, 2, 3].map(n => charger(`img/${c}/apercu${n}.png`));
 }
 
+// ---------- Bombes ----------
+const COOLDOWN_BOMBE = 2000;  // 2 s entre deux dépôts
+const MAX_BOMBES = 10;
+let bombes = [];
+
 // ---------- État général ----------
 let etat = "selection";   // "selection" ou "jeu"
 let choix = 0;            // index de la couleur survolée
@@ -45,12 +50,15 @@ const perso = {
   frame: 0,
   compteur: 0,
   vitesseAnim: 10,
+  vies: 3,
+  bombesRestantes: MAX_BOMBES,
+  dernierDepot: -Infinity,
 };
 
 function demarrerJeu() {
   perso.couleur = couleurs[choix];
 
-  const spawn = getSpawnPosition(0);
+  const spawn = getSpawnPosition(0); // position au coin gauche de la map
   perso.x = spawn.x;
   perso.y = spawn.y;
 
@@ -58,6 +66,11 @@ function demarrerJeu() {
   perso.frame = 0;
   perso.compteur = 0;
   etat = "jeu";
+
+  perso.vies = 3;
+  perso.bombesRestantes = MAX_BOMBES;
+  perso.dernierDepot = -Infinity;
+  bombes = [];
 }
 
 // ---------- Clavier ----------
@@ -72,6 +85,7 @@ window.addEventListener("keydown", e => {
     if (e.key === "Enter" || e.key === " ") demarrerJeu();
   } else {
     touches[e.key] = true;
+    if (e.key === " ") poserBombe();
   }
 });
 
@@ -93,6 +107,56 @@ canvas.addEventListener("click", e => {
     }
   });
 });
+
+// ---------- Bombes : logique ----------
+// Case du joueur, calculée depuis le centre de sa hitbox (x+20, y+20)
+function caseDuPerso() {
+  return {
+    col: Math.floor((perso.x + 20) / TILE_SIZE),
+    row: Math.floor((perso.y + 20) / TILE_SIZE),
+  };
+}
+
+function poserBombe() {
+  const now = performance.now();
+  if (perso.bombesRestantes <= 0) return;
+  if (now - perso.dernierDepot < COOLDOWN_BOMBE) return;
+
+  const { col, row } = caseDuPerso();
+  if (bombes.some(b => b.col === col && b.row === row)) return;
+
+  bombes.push(new Bomb(col, row, now, perso));
+  perso.bombesRestantes--;
+  perso.dernierDepot = now;
+}
+
+function appliquerDegats(cases) {
+  const p = caseDuPerso();
+  if (cases.some(c => c.col === p.col && c.row === p.row)) {
+    perso.vies--;
+    console.log("Touché ! Vies restantes :", perso.vies);
+  }
+}
+
+function updateBombes() {
+  const now = performance.now();
+  for (const b of bombes) {
+    if (b.update(now)) appliquerDegats(b.cases);
+  }
+  bombes = bombes.filter(b => !b.estTerminee(now));
+}
+
+function drawBombes() {
+  const now = performance.now();
+  for (const b of bombes) b.draw(ctx, now);
+}
+
+function drawHUD() {
+  ctx.fillStyle = "white";
+  ctx.font = "18px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(`Vies : ${perso.vies}   Bombes : ${perso.bombesRestantes}`, 10, canvas.height - 10);
+}
 
 // ---------- Mise à jour du jeu ----------
 function updateJeu() {
@@ -210,8 +274,10 @@ function drawSelection() {
 
 function drawJeu() {
   drawMap(ctx);
+  drawBombes();   // bombes et flammes sous le perso
   const img = sprites[perso.couleur][perso.direction][perso.frame];
   ctx.drawImage(img, perso.x, perso.y);
+  drawHUD();
 }
 
 // ---------- Boucle principale ----------
@@ -222,6 +288,7 @@ function loop() {
     drawSelection();
   } else {
     updateJeu();
+    updateBombes();   // <- ajouté
     drawJeu();
   }
 
