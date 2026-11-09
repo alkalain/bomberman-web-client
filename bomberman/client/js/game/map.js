@@ -52,10 +52,10 @@ const blocsDetruits = new Map();
 // ajout d'une image pour les blocs d'eau
 // poids : plus il est grand, plus le sol est fréquent
 const SOLS = [
-  { src: "img/map/sol1.png", poids: 60 }, // commun, 60%
-  { src: "img/map/sol2.png", poids: 25 }, // peu rare, 25 %
-  { src: "img/map/sol3.png", poids: 10 }, // rare, 10%
-  { src: "img/map/sol4.png", poids: 5 }, // très rare, 5%
+  { src: "img/map/sol1.png", poids: 95 }, // commun, 60%
+  { src: "img/map/sol2.png", poids: 2 }, // peu rare, 25 %
+  { src: "img/map/sol3.png", poids: 1 }, // rare, 10%
+  { src: "img/map/sol4.png", poids: 1 }, // très rare, 5%
 ];
 
 const imgsSol = SOLS.map((s) => {
