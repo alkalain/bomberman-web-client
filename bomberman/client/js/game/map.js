@@ -27,6 +27,11 @@ const imgsDecombres = Array.from({ length: NB_DECOMBRES }, (_, i) => {
 // "x,y" -> numéro de l'image choisie pour cette case
 const blocsDetruits = new Map();
 
+// ajout d'une image pour les blocs d'eau
+const imgSol = new Image();
+imgSol.src = "img/map/sol.png";
+imgSol.onerror = () => console.error("Image introuvable : " + imgSol.src);
+
 // 0 = floor, 1 = solid wall, 2 = breakable block
 const map = Array.from({ length: MAP_HEIGHT }, (_, y) =>
   Array.from({ length: MAP_WIDTH }, (_, x) =>
@@ -50,8 +55,7 @@ function drawMap(ctx) {
       const py = y * TILE_SIZE;
 
       // 1. Le sol est dessiné sous toutes les cases
-      ctx.fillStyle = "#75a843";
-      ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+      ctx.drawImage(imgSol, px, py, TILE_SIZE, TILE_SIZE);
 
       // 2. Puis l'élément par-dessus
       const variante = blocsDetruits.get(`${x},${y}`);
@@ -60,7 +64,7 @@ function drawMap(ctx) {
       }
       if (tile === 1) {
         ctx.fillStyle = "#444";
-        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE); // remplacer par l'img mur
       } else if (tile === 2) {
         ctx.drawImage(imgBloc, px, py, TILE_SIZE, TILE_SIZE);
       }
