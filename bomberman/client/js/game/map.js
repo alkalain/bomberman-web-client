@@ -28,9 +28,31 @@ const imgsDecombres = Array.from({ length: NB_DECOMBRES }, (_, i) => {
 const blocsDetruits = new Map();
 
 // ajout d'une image pour les blocs d'eau
-const imgSol = new Image();
-imgSol.src = "img/map/sol.png";
-imgSol.onerror = () => console.error("Image introuvable : " + imgSol.src);
+// poids : plus il est grand, plus le sol est fréquent
+const SOLS = [
+  { src: "img/map/sol1.png", poids: 60 },   // commun, 60%
+  { src: "img/map/sol2.png", poids: 25 },   // peu rare, 25 %
+  { src: "img/map/sol3.png", poids: 10 },    // rare, 10% 
+  { src: "img/map/sol4.png", poids: 5 },    // très rare, 5%
+];
+
+const imgsSol = SOLS.map(s => {
+  const img = new Image();
+  img.src = s.src;
+  img.onerror = () => console.error("Image introuvable : " + img.src);
+  return img;
+});
+
+// Tirage pondéré : renvoie l'index d'un sol
+function tirerSol() {
+  const total = SOLS.reduce((somme, s) => somme + s.poids, 0);
+  let r = Math.random() * total;
+  for (let i = 0; i < SOLS.length; i++) {
+    r -= SOLS[i].poids;
+    if (r < 0) return i;
+  }
+  return 0;
+}
 
 // 0 = floor, 1 = solid wall, 2 = breakable block
 const map = Array.from({ length: MAP_HEIGHT }, (_, y) =>
@@ -48,6 +70,11 @@ for (let y = 1; y < MAP_HEIGHT - 1; y++) {
   }
 }
 
+// variantesSol[y][x] = index du sol de cette case
+const variantesSol = Array.from({ length: MAP_HEIGHT }, () =>
+  Array.from({ length: MAP_WIDTH }, () => tirerSol())
+);
+
 function drawMap(ctx) {
   map.forEach((row, y) => {
     row.forEach((tile, x) => {
@@ -55,7 +82,7 @@ function drawMap(ctx) {
       const py = y * TILE_SIZE;
 
       // 1. Le sol est dessiné sous toutes les cases
-      ctx.drawImage(imgSol, px, py, TILE_SIZE, TILE_SIZE);
+      ctx.drawImage(imgsSol[variantesSol[y][x]], px, py, TILE_SIZE, TILE_SIZE);
 
       // 2. Puis l'élément par-dessus
       const variante = blocsDetruits.get(`${x},${y}`);
