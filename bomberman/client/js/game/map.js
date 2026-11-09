@@ -1,12 +1,12 @@
-const TILE_SIZE = 790/15;
+const TILE_SIZE = 790 / 15;
 const MAP_WIDTH = 15;
 const MAP_HEIGHT = 13;
 
 const SPAWN_TILES = [
-  { x: 1, y: 1 },                       // top-left
-  { x: MAP_WIDTH - 2, y: 1 },          // top-right
-  { x: 1, y: MAP_HEIGHT - 2 },         // bottom-left
-  { x: MAP_WIDTH - 2, y: MAP_HEIGHT - 2 } // bottom-right
+  { x: 1, y: 1 }, // top-left
+  { x: MAP_WIDTH - 2, y: 1 }, // top-right
+  { x: 1, y: MAP_HEIGHT - 2 }, // bottom-left
+  { x: MAP_WIDTH - 2, y: MAP_HEIGHT - 2 }, // bottom-right
 ];
 
 // ajout d'une image pour les blocs cassables
@@ -14,13 +14,24 @@ const imgBloc = new Image();
 imgBloc.src = "img/map/bloc.png";
 imgBloc.onerror = () => console.error("Image introuvable : " + imgBloc.src);
 
+// ajout d'une image pour les blocs détruits
+const NB_DECOMBRES = 5; // nombre d'images de décombres
+
+const imgsDecombres = Array.from({ length: NB_DECOMBRES }, (_, i) => {
+  const img = new Image();
+  img.src = `img/map/decombres${i + 1}.png`;
+  img.onerror = () => console.error("Image introuvable : " + img.src);
+  return img;
+});
+
+// "x,y" -> numéro de l'image choisie pour cette case
+const blocsDetruits = new Map();
+
 // 0 = floor, 1 = solid wall, 2 = breakable block
 const map = Array.from({ length: MAP_HEIGHT }, (_, y) =>
   Array.from({ length: MAP_WIDTH }, (_, x) =>
-    x === 0 || y === 0 || x === MAP_WIDTH - 1 || y === MAP_HEIGHT - 1
-      ? 1
-      : 0
-  )
+    x === 0 || y === 0 || x === MAP_WIDTH - 1 || y === MAP_HEIGHT - 1 ? 1 : 0,
+  ),
 );
 
 // palcing unbrakable wals inside the playable area
@@ -43,6 +54,10 @@ function drawMap(ctx) {
       ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
 
       // 2. Puis l'élément par-dessus
+      const variante = blocsDetruits.get(`${x},${y}`);
+      if (tile === 0 && variante !== undefined) {
+        ctx.drawImage(imgsDecombres[variante], px, py, TILE_SIZE, TILE_SIZE);
+      }
       if (tile === 1) {
         ctx.fillStyle = "#444";
         ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
@@ -64,7 +79,7 @@ function getSpawnPosition(playerIndex = 0) {
 
   return {
     x: tile.x * TILE_SIZE,
-    y: tile.y * TILE_SIZE
+    y: tile.y * TILE_SIZE,
   };
 }
 
@@ -86,8 +101,11 @@ for (let y = 1; y < MAP_HEIGHT - 1; y++) {
   for (let x = 1; x < MAP_WIDTH - 1; x++) {
     const isNearSpawn = protectedSpawnTiles.has(`${x},${y}`);
 
-    if (map[y][x] === 0 && !isNearSpawn &&
-        Math.random() < DESTRUCTIBLE_WALL_CHANCE) {
+    if (
+      map[y][x] === 0 &&
+      !isNearSpawn &&
+      Math.random() < DESTRUCTIBLE_WALL_CHANCE
+    ) {
       map[y][x] = 2;
     }
   }

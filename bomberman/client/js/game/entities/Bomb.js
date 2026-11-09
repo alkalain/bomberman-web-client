@@ -58,6 +58,7 @@ class Bomb {
         cases.push({ col: c, row: r });
         if (type === 2) {                             // bloc cassable
           map[r][c] = 0;
+            blocsDetruits.set(`${c},${r}`, Math.floor(Math.random() * imgsDecombres.length)); // marque la case comme détruite pour l'affichage
           break;
         }
       }
