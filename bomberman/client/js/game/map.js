@@ -76,6 +76,16 @@ function tirerSol() {
   return 0;
 }
 
+// ajout d'une image pour les murs
+const imgMur = new Image();
+imgMur.src = "img/map/mur.png";
+imgMur.onerror = () => console.error("Image introuvable : " + imgMur.src);
+
+const imgBordure = new Image();
+imgBordure.src = "img/map/bordure.png";
+imgBordure.onerror = () =>
+  console.error("Image introuvable : " + imgBordure.src);
+
 // 0 = floor, 1 = solid wall, 2 = breakable block
 const map = Array.from({ length: MAP_HEIGHT }, (_, y) =>
   Array.from({ length: MAP_WIDTH }, (_, x) =>
@@ -117,8 +127,20 @@ function drawMap(ctx) {
         ctx.drawImage(imgsDecombres[variante], px, py, TILE_SIZE, TILE_SIZE);
       }
       if (tile === 1) {
-        ctx.fillStyle = "#444";
-        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE); // remplacer par l'img mur
+        const estBordure =
+          x === 0 || y === 0 || x === MAP_WIDTH - 1 || y === MAP_HEIGHT - 1;
+
+        // Fond marron pour les murs intérieurs uniquement
+        ctx.fillStyle = "#6b4226";
+        ctx.fillRect(px, py, TILE_SIZE, TILE_SIZE);
+
+        ctx.drawImage(
+          estBordure ? imgBordure : imgMur,
+          px,
+          py,
+          TILE_SIZE,
+          TILE_SIZE,
+        ); // pour différencier les murs de bordure des murs intérieurs
       } else if (tile === 2) {
         ctx.drawImage(imgBloc, px, py, TILE_SIZE, TILE_SIZE);
       }
