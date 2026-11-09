@@ -8,7 +8,7 @@ const HAUTEUR = canvas.height;
 canvas.height = (LARGEUR / 100) * 86;
 
 // ---------- Chargement des images ----------
-const couleurs = ["bleu", "vert", "rouge", "rose", "jaune"];
+const couleurs = ["bleu", "rose", "rouge", "jaune"];
 const directions = ["droite", "gauche", "haut", "bas"];
 
 function charger(src) {
@@ -60,7 +60,7 @@ const perso = {
 function demarrerJeu() {
   perso.couleur = couleurs[choix];
 
-  const spawn = getSpawnPosition(0); // position au coin gauche de la map
+  const spawn = getSpawnPosition(SPAWN_COULEUR[perso.couleur] ?? 0); // coin de spawn correspondant à la couleur choisie
   perso.x = spawn.x;
   perso.y = spawn.y;
 

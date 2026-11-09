@@ -9,6 +9,28 @@ const SPAWN_TILES = [
   { x: MAP_WIDTH - 2, y: MAP_HEIGHT - 2 }, // bottom-right
 ];
 
+// Couleur attribuée à chaque coin (même ordre que SPAWN_TILES)
+const COULEUR_DU_SPAWN = ["bleu", "rose", "rouge", "jaune"];
+
+// Inverse : couleur -> index du coin
+const SPAWN_COULEUR = {};
+COULEUR_DU_SPAWN.forEach((c, i) => (SPAWN_COULEUR[c] = i));
+
+// Images des coins
+const imgsSpawn = {};
+for (const c of COULEUR_DU_SPAWN) {
+  imgsSpawn[c] = new Image();
+  imgsSpawn[c].src = `img/map/spawn_${c}.png`;
+  imgsSpawn[c].onerror = () =>
+    console.error("Image introuvable : " + imgsSpawn[c].src);
+}
+
+// "x,y" -> couleur, pour retrouver vite si une case est un coin de spawn
+const spawnParCase = new Map();
+SPAWN_TILES.forEach((s, i) =>
+  spawnParCase.set(`${s.x},${s.y}`, COULEUR_DU_SPAWN[i]),
+);
+
 // ajout d'une image pour les blocs cassables
 const imgBloc = new Image();
 imgBloc.src = "img/map/bloc.png";
@@ -30,13 +52,13 @@ const blocsDetruits = new Map();
 // ajout d'une image pour les blocs d'eau
 // poids : plus il est grand, plus le sol est fréquent
 const SOLS = [
-  { src: "img/map/sol1.png", poids: 60 },   // commun, 60%
-  { src: "img/map/sol2.png", poids: 25 },   // peu rare, 25 %
-  { src: "img/map/sol3.png", poids: 10 },    // rare, 10% 
-  { src: "img/map/sol4.png", poids: 5 },    // très rare, 5%
+  { src: "img/map/sol1.png", poids: 60 }, // commun, 60%
+  { src: "img/map/sol2.png", poids: 25 }, // peu rare, 25 %
+  { src: "img/map/sol3.png", poids: 10 }, // rare, 10%
+  { src: "img/map/sol4.png", poids: 5 }, // très rare, 5%
 ];
 
-const imgsSol = SOLS.map(s => {
+const imgsSol = SOLS.map((s) => {
   const img = new Image();
   img.src = s.src;
   img.onerror = () => console.error("Image introuvable : " + img.src);
@@ -72,7 +94,7 @@ for (let y = 1; y < MAP_HEIGHT - 1; y++) {
 
 // variantesSol[y][x] = index du sol de cette case
 const variantesSol = Array.from({ length: MAP_HEIGHT }, () =>
-  Array.from({ length: MAP_WIDTH }, () => tirerSol())
+  Array.from({ length: MAP_WIDTH }, () => tirerSol()),
 );
 
 function drawMap(ctx) {
@@ -83,6 +105,11 @@ function drawMap(ctx) {
 
       // 1. Le sol est dessiné sous toutes les cases
       ctx.drawImage(imgsSol[variantesSol[y][x]], px, py, TILE_SIZE, TILE_SIZE);
+
+      const couleurSpawn = spawnParCase.get(`${x},${y}`);
+      if (couleurSpawn) {
+        ctx.drawImage(imgsSpawn[couleurSpawn], px, py, TILE_SIZE, TILE_SIZE);
+      }
 
       // 2. Puis l'élément par-dessus
       const variante = blocsDetruits.get(`${x},${y}`);
