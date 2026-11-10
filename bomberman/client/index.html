@@ -1,17 +1,66 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bomberman</title>
     <link rel="stylesheet" href="css/style.css" />
   </head>
   <body>
     <h1>Bomberman</h1>
     <p>Use the arrow keys to move and spacebar to place bombs.</p>
+
+    <!-- Barre d'action pour afficher/tester le scoreboard de fin -->
+    <div class="top-actions">
+      <button id="btn-open-scoreboard" class="scoreboard-btn scoreboard-btn-primary" type="button">
+        🏆 Afficher le Scoreboard de fin
+      </button>
+    </div>
+
     <div id="game-container">
       <canvas id="game" width="792" height="500" style="border:1px solid black"></canvas>
+
+      <!-- Scoreboard de fin de partie (4 joueurs) -->
+      <div id="scoreboard-overlay" class="scoreboard-overlay" role="dialog" aria-labelledby="scoreboard-title">
+        <div class="scoreboard-modal">
+          <div class="scoreboard-header">
+            <span class="scoreboard-badge-fin">FIN DE LA PARTIE</span>
+            <h2 id="scoreboard-title">CLASSEMENT FINAL</h2>
+            <p id="scoreboard-subtitle" class="scoreboard-subtitle">
+              Récapitulatif de la survie et des éliminations (4 joueurs)
+            </p>
+          </div>
+
+          <div class="scoreboard-table-wrapper">
+            <table class="scoreboard-table" id="scoreboard-table">
+              <thead>
+                <tr>
+                  <th class="col-rang">Rang</th>
+                  <th class="col-joueur">Joueur</th>
+                  <th class="col-statut">Statut / Ordre de mort</th>
+                  <th class="col-pv">Points de vie restants</th>
+                </tr>
+              </thead>
+              <tbody id="scoreboard-body">
+                <!-- Lignes générées dynamiquement par UI/scoreboard.js -->
+              </tbody>
+            </table>
+          </div>
+
+          <div class="scoreboard-footer">
+            <button id="btn-switch-scenario" class="scoreboard-btn scoreboard-btn-secondary" type="button">
+              🔄 Changer de scénario fictif (1/3)
+            </button>
+            <button id="btn-close-scoreboard" class="scoreboard-btn scoreboard-btn-primary" type="button">
+              🎮 Retour au jeu
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
+
     <script src="js/game/map.js"></script>
     <script src="js/game/game.js"></script>
+    <script src="UI/scoreboard.js"></script>
   </body>
 </html>
