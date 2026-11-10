@@ -170,6 +170,15 @@ function updateBombes() {
   bombes = bombes.filter((b) => !b.estTerminee(now));
 }
 
+
+// Y a-t-il une bombe solide à ce pixel ?
+function isBombAtPixel(x, y) {
+  const col = Math.floor(x / TILE_SIZE);
+  const row = Math.floor(y / TILE_SIZE);
+  return bombes.some((b) => b.solide && b.col === col && b.row === row);
+}
+
+// ---------- HITBOXES ----------
 // Hitbox du joueur (même valeurs que dans canMoveTo : décalage 8, taille 24)
 function hitboxPerso() {
   return {
@@ -193,26 +202,22 @@ function persoChevauche(b) {
   );
 }
 
-// Y a-t-il une bombe solide à ce pixel ?
-function isBombAtPixel(x, y) {
-  const col = Math.floor(x / TILE_SIZE);
-  const row = Math.floor(y / TILE_SIZE);
-  return bombes.some((b) => b.solide && b.col === col && b.row === row);
-}
+// Collision joueur
+function canMoveTo(x, y) {
+  const left = x + 8;
+  const right = x + 8 + 24 - 1;
+  const top = y + 8;
+  const bottom = y + 8 + 24 - 1;
 
-function drawBombes() {
-  const now = performance.now();
-  for (const b of bombes) b.draw(ctx, now);
-}
-
-function drawHUD() {
-  ctx.fillStyle = "white";
-  ctx.font = "18px sans-serif";
-  ctx.textAlign = "left";
-  ctx.fillText(
-    `Vies : ${perso.vies}   Bombes : ${perso.bombesRestantes}`,
-    10,
-    canvas.height - 10,
+  return !(
+    isBlockedAtPixel(left, top) ||
+    isBlockedAtPixel(right, top) ||
+    isBlockedAtPixel(left, bottom) ||
+    isBlockedAtPixel(right, bottom) ||
+    isBombAtPixel(left, top) ||
+    isBombAtPixel(right, top) ||
+    isBombAtPixel(left, bottom) ||
+    isBombAtPixel(right, bottom)
   );
 }
 
@@ -235,25 +240,6 @@ function updateJeu() {
   } else if (touches["ArrowDown"]) {
     dy = perso.vitesse;
     dir = "bas";
-  }
-
-  // ---------- Hitbox ----------
-  function canMoveTo(x, y) {
-    const left = x + 8;
-    const right = x + 8 + 24 - 1;
-    const top = y + 8;
-    const bottom = y + 8 + 24 - 1;
-
-    return !(
-      isBlockedAtPixel(left, top) ||
-      isBlockedAtPixel(right, top) ||
-      isBlockedAtPixel(left, bottom) ||
-      isBlockedAtPixel(right, bottom) ||
-      isBombAtPixel(left, top) ||
-      isBombAtPixel(right, top) ||
-      isBombAtPixel(left, bottom) ||
-      isBombAtPixel(right, bottom)
-    );
   }
 
   const oldX = perso.x;
@@ -344,6 +330,25 @@ function drawSelection() {
     "← →  pour choisir      Entrée  pour valider",
     canvas.width / 2,
     440,
+  );
+}
+
+// Dessin des bombes et flammes
+function drawBombes() {
+  const now = performance.now();
+  for (const b of bombes) b.draw(ctx, now);
+}
+
+
+// ---------- HUD ----------
+function drawHUD() {
+  ctx.fillStyle = "white";
+  ctx.font = "18px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText(
+    `Vies : ${perso.vies}   Bombes : ${perso.bombesRestantes}`,
+    10,
+    canvas.height - 10,
   );
 }
 
