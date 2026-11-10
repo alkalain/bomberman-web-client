@@ -6,3 +6,293 @@
 #game{
     width: 50%;
 }
+
+
+
+:root {
+    --water-bg: #112a22;
+    --water-surface: #1b4d3e;
+    --lilypad-green: #2d6a4f;
+    --lilypad-hover: #40916c;
+    --text-color: #ffffff;
+    --accent-yellow: #d4a373;
+    --font-main: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
+}
+
+/* --- Styles Généraux --- */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: var(--font-main);
+    background: radial-gradient(circle, var(--water-surface) 0%, var(--water-bg) 100%);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Gestion des écrans (masquer / afficher) */
+.hidden {
+    display: none !important;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+/* --- Typographie et En-têtes du Menu --- */
+.game-title {
+    font-size: 3.5rem;
+    margin: 0;
+    color: #52b788;
+    text-shadow: 3px 3px 0px #081c15, 0 0 15px rgba(82, 183, 136, 0.5);
+    letter-spacing: 2px;
+}
+
+.subtitle {
+    margin-top: 5px;
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+    color: #b7e4c7;
+}
+
+h2 {
+    color: #52b788;
+    font-size: 2.2rem;
+    text-shadow: 2px 2px 0px #081c15;
+    margin-bottom: 15px;
+}
+
+/* --- Formulaire de Saisie (Pseudo) --- */
+.player-setup {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-setup label {
+    font-size: 0.95rem;
+    color: #d8f3dc;
+}
+
+.player-setup input {
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 3px solid var(--lilypad-green);
+    background-color: #081c15;
+    color: white;
+    font-size: 1.1rem;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    transition: border-color 0.2s;
+}
+
+.player-setup input:focus {
+    border-color: #52b788;
+}
+
+/* --- Boutons Style Nénuphars --- */
+.lilypad-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 280px;
+}
+
+.lilypad-btn {
+    background-color: var(--lilypad-green);
+    border: 3px solid #1b4332;
+    border-radius: 35px;
+    padding: 14px 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 6px 0px #081c15;
+    text-align: center;
+}
+
+.lilypad-btn:hover {
+    background-color: var(--lilypad-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0px #081c15;
+}
+
+.lilypad-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0px #081c15;
+}
+
+/* Bouton secondaire (ex: Quitter / Retour) */
+.secondary-btn {
+    margin-top: 15px;
+    background-color: #b7094c;
+    border-color: #890339;
+    box-shadow: 0 6px 0px #4a011d;
+}
+
+.secondary-btn:hover {
+    background-color: #c71585;
+    box-shadow: 0 9px 0px #4a011d;
+}
+
+.secondary-btn:active {
+    box-shadow: 0 3px 0px #4a011d;
+}
+
+/* --- Écran de Jeu (Canvas d'origine) --- */
+#game-screen {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+#game-container {
+    background: #081c15;
+    padding: 15px;
+    border-radius: 12px;
+    border: 4px solid var(--lilypad-green);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* --- Tableau des Scores (Scoreboard HTML / CSS / JS classique) --- */
+.scoreboard-table {
+    width: 80%;
+    max-width: 500px;
+    border-collapse: collapse;
+    background-color: rgba(8, 28, 21, 0.9);
+    border: 3px solid var(--lilypad-green);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+.scoreboard-table th, .scoreboard-table td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.scoreboard-table th {
+    background-color: var(--lilypad-green);
+    color: #d8f3dc;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #1b4332;
+}
+
+.scoreboard-table td {
+    border-bottom: 1px solid rgba(82, 183, 136, 0.2);
+    color: white;
+}
+
+.scoreboard-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- Écran des Règles --- */
+#rules-screen p {
+    background-color: rgba(8, 28, 21, 0.8);
+    border: 2px solid var(--lilypad-green);
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 450px;
+    text-align: center;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+
+
+
+
+/* --- Sélection de Grenouilles --- */
+.character-selection {
+    margin: 15px 0 25px 0;
+    text-align: center;
+}
+
+.character-selection p {
+    margin-bottom: 10px;
+    color: #d8f3dc;
+    font-size: 1rem;
+}
+
+.frog-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.frog-choice {
+    background: #081c15;
+    border: 2px solid var(--lilypad-green);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    transition: all 0.2s ease;
+}
+
+.frog-choice:hover {
+    border-color: #52b788;
+    transform: scale(1.05);
+}
+
+.frog-choice.active {
+    background: var(--lilypad-hover);
+    border-color: #ffffff;
+    color: #000;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(112, 224, 0, 0.6);
+}
+
+
+
+/* Arrière-plan pour les grenouilles animées */
+#frogs-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Ne bloque pas les clics sur le menu */
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* Style individuel de chaque grenouille en fond */
+.bg-frog {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 0.1s linear;
+    opacity: 0.7; /* Légère transparence pour s'intégrer au décor */
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.4));
+}
+
+
+
+
+
+
+
+
