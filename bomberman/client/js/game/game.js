@@ -115,17 +115,12 @@ canvas.addEventListener("click", (e) => {
 // ---------- Bombes : logique ----------
 
 function appliquerDegats(cases) {
-  if (!perso.vivant) return;
+  if (!perso.getVivant()) return;
 
-  const p = caseDuPerso();
+  const p = perso.caseDuPerso();
   if (cases.some((c) => c.col === p.col && c.row === p.row)) {
-    perso.vies--;
-    console.log("Touché ! Vies restantes :", perso.vies);
-
-    if (perso.vies <= 0) {
-      perso.vies = 0;
-      perso.vivant = false; // le perso disparaît
-    }
+    perso.prendreDegat();
+    console.log("Touché ! Vies restantes :", perso.getVies());
   }
 }
 
