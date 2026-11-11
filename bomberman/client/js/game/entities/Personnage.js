@@ -1,12 +1,15 @@
-export class Perso {
+export class Personnage {
     constructor({
     col = 100,
-    raw = 100,
+    row = 100,
     vitesse = 3,
     couleur = "bleu",
     direction = "bas",
     vies = 3,
-    bombesRestantes = 10
+    bombesRestantes = 10,
+
+    getBombes,
+    BombClass,
     } = {}){
 
         this.col = col;
@@ -25,6 +28,9 @@ export class Perso {
         
         this.dernierDepot = -Infinity;
         this.vivant = true;
+
+        this.getBombes = getBombes;
+        this.BombClass = BombClass;
     }
 // -------- Getter/Setter ---------
     setCouleur(couleur) {
@@ -41,6 +47,10 @@ export class Perso {
         this.vivant = true;
     }
 
+    getVitesse(){
+      return this.vitesse;
+    }
+
     setDirection(direction){
       this.direction = direction
     }
@@ -49,7 +59,7 @@ export class Perso {
       this.frame = frame;
     }
 
-    setCompter(compteur){
+    setCompteur(compteur){
       this.compteur = compteur
     }
 
@@ -62,7 +72,7 @@ export class Perso {
     }
 
     setVies(nbVies){
-      this.vies + nbVies;
+      this.vies += nbVies;
     }
 
     getVies(){
@@ -86,14 +96,15 @@ export class Perso {
         };
     }
 
+// ---------- HITBOXES ---------
     hitbox() {
-    return {
-      left: this.col + 8,
-      right: this.col + 8 + 24,
-      top: this.row + 8,
-      bottom: this.row + 8 + 24,
-    };
-  }
+      return {
+        left: this.col + 8,
+        right: this.col + 8 + 24,
+        top: this.row + 8,
+        bottom: this.row + 8 + 24,
+      };
+   }
 
   canMoveTo(col, row) {
     const left = col + 8;
