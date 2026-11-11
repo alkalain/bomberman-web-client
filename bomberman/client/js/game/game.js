@@ -113,27 +113,6 @@ canvas.addEventListener("click", (e) => {
 });
 
 // ---------- Bombes : logique ----------
-// Case du joueur, calculée depuis le centre de sa hitbox (x+20, y+20)
-function caseDuPerso() {
-  return {
-    col: Math.floor((perso.x + 20) / TILE_SIZE),
-    row: Math.floor((perso.y + 20) / TILE_SIZE),
-  };
-}
-
-function poserBombe() {
-  if (!perso.vivant) return;
-  const now = performance.now();
-  if (perso.bombesRestantes <= 0) return;
-  if (now - perso.dernierDepot < COOLDOWN_BOMBE) return;
-
-  const { col, row } = caseDuPerso();
-  if (bombes.some((b) => b.col === col && b.row === row)) return;
-
-  bombes.push(new Bomb(col, row, now, perso));
-  perso.bombesRestantes--;
-  perso.dernierDepot = now;
-}
 
 function appliquerDegats(cases) {
   if (!perso.vivant) return;
