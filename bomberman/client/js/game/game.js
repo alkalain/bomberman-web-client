@@ -1,3 +1,5 @@
+import { Personnage } from "./entities/Personnage.js";
+
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 ctx.imageSmoothingEnabled = false; // pour un rendu pixel-art
@@ -42,37 +44,27 @@ let choix = 0; // index de la couleur survolée
 let horlogeSelection = 0; // fait animer le perso sélectionné
 
 // ---------- Le personnage (créé après le choix) ----------
-const perso = {
-  x: 100,
-  y: 100,
+const perso = new Personnage({
+  col: 100,
+  row: 100,
   vitesse: 3,
-  couleur: null,
-  direction: "bas",
-  frame: 0,
-  compteur: 0,
-  vitesseAnim: 10,
-  vies: 3,
-  bombesRestantes: MAX_BOMBES,
-  dernierDepot: -Infinity,
-  vivant: true,
-};
+  couleur: "bleu",
+});
 
 function demarrerJeu() {
-  perso.couleur = couleurs[choix];
-
-  const spawn = getSpawnPosition(SPAWN_COULEUR[perso.couleur] ?? 0); // coin de spawn correspondant à la couleur choisie
-  perso.x = spawn.x;
-  perso.y = spawn.y;
-
-  perso.direction = "bas";
-  perso.frame = 0;
-  perso.compteur = 0;
   etat = "jeu";
-  perso.vivant = true;
 
-  perso.vies = 3;
-  perso.bombesRestantes = MAX_BOMBES;
-  perso.dernierDepot = -Infinity;
+  perso.setCouleur(couleurs[choix]);
+  const spawn = getSpawnPosition(SPAWN_COULEUR[perso.couleur] ?? 0); // coin de spawn correspondant à la couleur choisie
+
+  perso.setSpawn(spawn.x,spawn.y);
+
+  perso.setDirection("bas");
+  perso.setFrame(0);
+  perso.setCompteur(0);
+
+  perso.setBombesRestantes(MAX_BOMBES);
+
   bombes = [];
 }
 
