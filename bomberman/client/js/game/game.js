@@ -80,7 +80,7 @@ window.addEventListener("keydown", (e) => {
       choix = (choix - 1 + couleurs.length) % couleurs.length;
     if (e.key === "Enter" || e.key === " ") demarrerJeu();
   } else {
-    if (!perso.vivant) {
+    if (!perso.getVivant()) {
       if (e.key === "Enter") {
         for (const k in touches) touches[k] = false;
         etat = "selection"; // retour au choix du personnage
@@ -88,7 +88,7 @@ window.addEventListener("keydown", (e) => {
       return;
     }
     touches[e.key] = true;
-    if (e.key === " ") poserBombe();
+    if (e.key === " ") perso.poserBombe();
   }
 });
 
