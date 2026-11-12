@@ -171,65 +171,6 @@ function persoChevauche(b) {
   );
 }
 
-
-// ---------- Mise à jour du jeu ----------
-/*
-function updateJeu() {
-  if (!perso.vivant) return; // un mort ne bouge plus
-  let dx = 0;
-  let dy = 0;
-  let dir = null;
-
-  if (touches["ArrowRight"]) {
-    dx = perso.vitesse;
-    dir = "droite";
-  } else if (touches["ArrowLeft"]) {
-    dx = -perso.vitesse;
-    dir = "gauche";
-  } else if (touches["ArrowUp"]) {
-    dy = -perso.vitesse;
-    dir = "haut";
-  } else if (touches["ArrowDown"]) {
-    dy = perso.vitesse;
-    dir = "bas";
-  }
-
-  const oldX = perso.x;
-  const oldY = perso.y;
-
-  // Check each axis separately to allow sliding along walls.
-  if (dx !== 0 && canMoveTo(perso.x + dx, perso.y)) {
-    perso.x += dx;
-  }
-  if (dy !== 0 && canMoveTo(perso.x, perso.y + dy)) {
-    perso.y += dy;
-  }
-
-  const moved = perso.x !== oldX || perso.y !== oldY;
-
-  if (dir) {
-    if (dir !== perso.direction) {
-      perso.direction = dir;
-      perso.frame = 0;
-      perso.compteur = 0;
-    }
-
-    if (moved) {
-      perso.compteur++;
-      if (perso.compteur >= perso.vitesseAnim) {
-        perso.compteur = 0;
-        perso.frame = (perso.frame + 1) % 2;
-      }
-    } else {
-      perso.frame = 0;
-      perso.compteur = 0;
-    }
-  } else {
-    perso.frame = 0;
-    perso.compteur = 0;
-  }
-}
-*/
 // ----------  Dessin ----------
 const TAILLE_SELECTION = 96; // taille d'affichage dans l'écran de choix (à adapter)
 
