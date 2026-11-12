@@ -87,8 +87,17 @@ export class Bomb {
       }
       ctx.globalAlpha = 1;
     } else {
-      const img = this.etat === "allumee" ? imgBombeAllumee : imgBombe;
-      ctx.drawImage(img, this.col * TILE_SIZE, this.row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+       const img = this.etat === "allumee" ? imgBombeAllumee : imgBombe;
+
+      if (img.complete && img.naturalWidth > 0) {
+        ctx.drawImage(
+          img,
+          this.col * TILE_SIZE,
+          this.row * TILE_SIZE,
+          TILE_SIZE,
+          TILE_SIZE,
+        );
+      }
     }
   }
 }
