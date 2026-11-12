@@ -13,8 +13,11 @@ export class Personnage {
     vies = 3,
     bombesRestantes = 10,
 
+    sprites,
+    isBombAtPixel,
     getBombes,
     BombClass,
+    cooldownBombe,
     } = {}){
 
         this.col = col;
@@ -34,8 +37,11 @@ export class Personnage {
         this.dernierDepot = -Infinity;
         this.vivant = true;
 
+        this.sprites = sprites ;
+        this.isBombAtPixel = isBombAtPixel;
         this.getBombes = getBombes;
         this.BombClass = BombClass;
+        this.cooldownBombe = cooldownBombe;
     }
 // -------- Getter/Setter ---------
     setCouleur(couleur) {
@@ -122,25 +128,27 @@ export class Personnage {
       isBlockedAtPixel(right, top) ||
       isBlockedAtPixel(left, bottom) ||
       isBlockedAtPixel(right, bottom) ||
-      isBombAtPixel(left, top) ||
-      isBombAtPixel(right, top) ||
-      isBombAtPixel(left, bottom) ||
-      isBombAtPixel(right, bottom)
+      this.isBombAtPixel(left, top) ||
+      this.isBombAtPixel(right, top) ||
+      this.isBombAtPixel(left, bottom) ||
+      this.isBombAtPixel(right, bottom)
     );
   }
 
   poserBombe() {
+    const now = performance.now();
+    const bombes = this.getBombes();
+
     if (!this.vivant) return false;
 
-    const now = performance.now();
     if (this.bombesRestantes <= 0) return false;
-    if (now - this.dernierDepot < COOLDOWN_BOMBE) return false;
+    if (now - this.dernierDepot < this.cooldownBombe) return false;
 
     const { col, row } = this.caseDuPerso();
 
     if (bombes.some((b) => b.col === col && b.row === row)) return false;
 
-    bombes.push(new Bomb(col, row, now, this));
+    bombes.push(new this.BombClass(col, row, now, this));
     this.bombesRestantes--;
     this.dernierDepot = now;
 
@@ -218,7 +226,7 @@ export class Personnage {
   draw(ctx) {
     if (!this.vivant) return;
 
-    const img = sprites[this.couleur][this.direction][this.frame];
+    const img = this.sprites[this.couleur][this.direction][this.frame];
     ctx.drawImage(img, this.col, this.row);
   }
 }

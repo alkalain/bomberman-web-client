@@ -56,6 +56,11 @@ const perso = new Personnage({
   row: 100,
   vitesse: 3,
   couleur: "bleu",
+  sprites,
+  isBombAtPixel,
+  getBombes: () => bombes,
+  BombClass: Bomb,
+  cooldownBombe: COOLDOWN_BOMBE,
 });
 
 function demarrerJeu() {
@@ -152,19 +157,10 @@ function isBombAtPixel(x, y) {
 }
 
 // ---------- HITBOXES ----------
-// Hitbox du joueur (même valeurs que dans canMoveTo : décalage 8, taille 24)
-function hitboxPerso() {
-  return {
-    left: perso.x + 8,
-    right: perso.x + 8 + 24,
-    top: perso.y + 8,
-    bottom: perso.y + 8 + 24,
-  };
-}
 
 // La hitbox du joueur chevauche-t-elle la case de la bombe ?
 function persoChevauche(b) {
-  const h = hitboxPerso();
+  const h = perso.hitbox();
   const bx = b.col * TILE_SIZE;
   const by = b.row * TILE_SIZE;
   return (
@@ -175,26 +171,9 @@ function persoChevauche(b) {
   );
 }
 
-// Collision joueur
-function canMoveTo(x, y) {
-  const left = x + 8;
-  const right = x + 8 + 24 - 1;
-  const top = y + 8;
-  const bottom = y + 8 + 24 - 1;
-
-  return !(
-    isBlockedAtPixel(left, top) ||
-    isBlockedAtPixel(right, top) ||
-    isBlockedAtPixel(left, bottom) ||
-    isBlockedAtPixel(right, bottom) ||
-    isBombAtPixel(left, top) ||
-    isBombAtPixel(right, top) ||
-    isBombAtPixel(left, bottom) ||
-    isBombAtPixel(right, bottom)
-  );
-}
 
 // ---------- Mise à jour du jeu ----------
+/*
 function updateJeu() {
   if (!perso.vivant) return; // un mort ne bouge plus
   let dx = 0;
@@ -250,7 +229,7 @@ function updateJeu() {
     perso.compteur = 0;
   }
 }
-
+*/
 // ----------  Dessin ----------
 const TAILLE_SELECTION = 96; // taille d'affichage dans l'écran de choix (à adapter)
 
@@ -282,15 +261,17 @@ function drawSelection() {
       ctx.strokeRect(centreX - 80, centreY - 100, 160, 200);
     }
 
-    ctx.globalAlpha = selectionne ? 1 : 0.6;
-    ctx.drawImage(
-      img,
-      centreX - taille / 2,
-      centreY - taille / 2,
-      taille,
-      taille,
-    );
+    if (img.complete && img.naturalWidth > 0) {
+      ctx.globalAlpha = selectionne ? 1 : 0.6;
+      ctx.drawImage(
+        img,
+        centreX - taille / 2,
+        centreY - taille / 2,
+        taille,
+        taille,
+      );
     ctx.globalAlpha = 1;
+    }
 
     ctx.fillStyle = "#222";
     ctx.font = selectionne ? "bold 20px sans-serif" : "18px sans-serif";
@@ -319,7 +300,7 @@ function drawHUD() {
   ctx.font = "18px sans-serif";
   ctx.textAlign = "left";
   ctx.fillText(
-    `Vies : ${perso.vies}   Bombes : ${perso.bombesRestantes}`,
+    `Vies : ${perso.getVies()}   Bombes : ${perso.getBombesRestantes()}`,
     10,
     canvas.height - 10,
   );
@@ -328,12 +309,9 @@ function drawHUD() {
 function drawJeu() {
   drawMap(ctx);
   drawBombes(); // bombes et flammes sous le perso
-  if (perso.vivant) {
-    const img = sprites[perso.couleur][perso.direction][perso.frame];
-    ctx.drawImage(img, perso.x, perso.y);
-  }
+  perso.draw(ctx);
   drawHUD();
-  if (!perso.vivant) drawMort();
+  if (!perso.getVivant()) drawMort();
 }
 
 function drawMort() {
@@ -362,7 +340,7 @@ function loop() {
   if (etat === "selection") {
     drawSelection();
   } else {
-    updateJeu();
+    perso.update(touches);
     updateBombes();
     drawJeu();
   }
