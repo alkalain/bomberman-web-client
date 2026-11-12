@@ -51,23 +51,23 @@ body {
     left: 0;
     padding: 20px;
     box-sizing: border-box;
+
+    background-image: url('../img/fondmenu.webp'); 
+    background-repeat: no-repeat; 
+    background-position: center; 
+    background-size: cover;
 }
 
-/* --- Typographie et En-têtes du Menu --- */
-.game-title {
-    font-size: 3.5rem;
-    margin: 0;
-    color: #52b788;
-    text-shadow: 3px 3px 0px #081c15, 0 0 15px rgba(82, 183, 136, 0.5);
-    letter-spacing: 2px;
+
+.logo {
+  position: absolute;
+  top: 30px; 
+  width: 600px;
+  height: auto;
+  image-rendering: pixelated;
 }
 
-.subtitle {
-    margin-top: 5px;
-    margin-bottom: 25px;
-    font-size: 1.1rem;
-    color: #b7e4c7;
-}
+
 
 h2 {
     color: #52b788;
