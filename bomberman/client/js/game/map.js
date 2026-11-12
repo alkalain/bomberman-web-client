@@ -1,3 +1,30 @@
+export {
+  TILE_SIZE,
+  MAP_WIDTH,
+  MAP_HEIGHT,
+  SPAWN_TILES,
+  COULEUR_DU_SPAWN,
+  SPAWN_COULEUR,
+  imgsSpawn,
+  spawnParCase,
+  imgBloc,
+  NB_DECOMBRES,
+  imgsDecombres,
+  blocsDetruits,
+  SOLS,
+  imgsSol,
+  tirerSol,
+  imgMur,
+  imgBordure,
+  map,
+  variantesSol,
+  drawMap,
+  getSpawnPosition,
+  protectedSpawnTiles,
+  DESTRUCTIBLE_WALL_CHANCE,
+  isBlockedAtPixel,
+};
+
 const TILE_SIZE = 790 / 15;
 const MAP_WIDTH = 15;
 const MAP_HEIGHT = 13;

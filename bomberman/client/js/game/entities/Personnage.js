@@ -1,3 +1,8 @@
+import {
+  TILE_SIZE,
+  isBlockedAtPixel,
+} from "../map.js";
+
 export class Personnage {
     constructor({
     col = 100,

@@ -1,3 +1,10 @@
+import {
+  TILE_SIZE,
+  map,
+  blocsDetruits,
+  imgsDecombres,
+} from "../map.js";
+
 const BOMB_DELAI_ALLUMAGE = 1000;   // s'allume après 1 s
 const BOMB_DELAI_EXPLOSION = 2000;  // explose après 2 s
 const BOMB_DUREE_EXPLOSION = 500;   // flammes visibles 0,5 s
@@ -8,7 +15,7 @@ imgBombe.src = "img/bombe.png";
 const imgBombeAllumee = new Image();
 imgBombeAllumee.src = "img/bombe_allumee.png";
 
-class Bomb {
+export class Bomb {
   constructor(col, row, now, owner = null) {
     this.col = col;
     this.row = row;

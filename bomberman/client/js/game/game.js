@@ -1,4 +1,11 @@
 import { Personnage } from "./entities/Personnage.js";
+import {
+  TILE_SIZE,
+  SPAWN_COULEUR,
+  getSpawnPosition,
+  drawMap,
+} from "./map.js";
+import { Bomb } from "./entities/Bomb.js";
 
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
