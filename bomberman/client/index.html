@@ -82,16 +82,102 @@
 
     <!-- 5. ÉCRAN DES RÈGLES -->
     <div id="rules-screen" class="screen hidden">
-      <h2>📜 Règles du Jeu</h2>
-      <p>Utilisez les flèches directionnelles pour vous déplacer et la barre d'espace pour poser des nenuf-bombes !</p>
-      <button id="btn-back-from-rules" class="lilypad-btn">Retour au Menu</button>
+      <div class="bc-rules-wrapper">
+        <div class="bc-rules-header">
+          <h2>📜 Règles du Marécage — Bombercroack</h2>
+          <p class="bc-rules-subtitle">Affrontez d'autres grenouilles en ligne et soyez le dernier amphibien sur son nénuphar !</p>
+        </div>
+
+        <!-- 3 Blocs principaux de règles -->
+        <div class="bc-rules-grid">
+          <div class="bc-rule-card">
+            <h3>🎯 Objectif & Multijoueur</h3>
+            <ul>
+              <li>Chaque joueur contrôle sa grenouille depuis sa propre machine en temps réel.</li>
+              <li>Frayez-vous un chemin en détruisant les <strong>roseaux et caisses</strong> du marais.</li>
+              <li>Piégez vos adversaires avec vos explosions : le dernier survivant remporte la manche et grimpe dans le <strong>Scoreboard</strong> !</li>
+            </ul>
+          </div>
+
+          <div class="bc-rule-card">
+            <h3>🎮 Commandes de Base</h3>
+            <ul>
+              <li><strong>Se déplacer :</strong> <span class="bc-kbd">⬆️</span> <span class="bc-kbd">⬇️</span> <span class="bc-kbd">⬅️</span> <span class="bc-kbd">➡️</span> (ou <span class="bc-kbd">Z</span><span class="bc-kbd">Q</span><span class="bc-kbd">S</span><span class="bc-kbd">D</span>).</li>
+              <li><strong>Poser une nenuf-bombe :</strong> <span class="bc-kbd">Espace</span>.</li>
+              <li><strong>Esquive :</strong> Déplacez-vous vite hors de la croix d'explosion avant la détonation !</li>
+            </ul>
+          </div>
+
+          <div class="bc-rule-card">
+            <h3>💣 Mécanique des Nenuf-Bombes</h3>
+            <ul>
+              <li>Une bombe explose après <strong>3 secondes</strong> en projetant une onde en croix (Haut, Bas, Gauche, Droite).</li>
+              <li>Les <strong>rochers moussus</strong> bloquent les flammes, tandis que les obstacles fragiles explosent.</li>
+              <li><strong>Réaction en chaîne :</strong> Une explosion déclenche instantanément les autres bombes touchées !</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bonus / Power-ups -->
+        <h3 class="bc-powerups-title">✨ Bonus cachés sous les roseaux</h3>
+        <div class="bc-powerups-row">
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">💣</div>
+            <div class="bc-powerup-info">
+              <strong>Nénuphar +1</strong>
+              <span>Permet de poser une nenuf-bombe supplémentaire simultanément.</span>
+            </div>
+          </div>
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">🔥</div>
+            <div class="bc-powerup-info">
+              <strong>Croassement Ardent</strong>
+              <span>Augmente la portée de vos explosions d'une case dans chaque direction.</span>
+            </div>
+          </div>
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">⚡</div>
+            <div class="bc-powerup-info">
+              <strong>Palmes Turbo</strong>
+              <span>Augmente la vitesse de déplacement de votre grenouille sur les nénuphars.</span>
+            </div>
+          </div>
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">🛡️</div>
+            <div class="bc-powerup-info">
+              <strong>Bulle Protectrice</strong>
+              <span>Encaisse une explosion à votre place avant d'éclater.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini-arène interactive de démonstration -->
+        <div class="bc-demo-box">
+          <div class="bc-demo-info">
+            <h3>🐸 Zone d'entraînement rapide</h3>
+            <p id="bc-demo-status">Testez la pose d'une nenuf-bombe sur la mini-grille pour voir la détonation en croix et libérer un bonus !</p>
+            <div class="bc-demo-controls">
+              <button type="button" id="bc-btn-up" class="bc-demo-btn">⬆️</button>
+              <button type="button" id="bc-btn-down" class="bc-demo-btn">⬇️</button>
+              <button type="button" id="bc-btn-left" class="bc-demo-btn">⬅️</button>
+              <button type="button" id="bc-btn-right" class="bc-demo-btn">➡️</button>
+              <button type="button" id="bc-btn-bomb" class="bc-demo-btn">💣 Poser Bombe</button>
+              <button type="button" id="bc-btn-reset" class="bc-demo-btn">🔄 Réinitialiser</button>
+            </div>
+          </div>
+          <div id="bc-demo-grid" class="bc-demo-arena" aria-label="Mini-arène de démonstration"></div>
+        </div>
+      </div>
+
+      <div class="bc-rules-footer">
+        <button id="btn-back-from-rules" class="lilypad-btn">Retour au Menu</button>
+      </div>
     </div>   
 
     <script src="js/game/menu.js"></script> <!-- js pour gerer l'affichage des menus (sakina) -->
+    <script src="js/game/rules.js"></script> <!-- js pour la mini-arène des règles -->
 
     <script src="js/game/map.js"></script>
     <script src="js/game/game.js"></script>
   </body>
 </html>
-
-
