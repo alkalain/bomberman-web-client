@@ -1,8 +1,3 @@
-import {
-  TILE_SIZE,
-  isBlockedAtPixel,
-} from "../map.js";
-
 export class Personnage {
     constructor({
     col = 100,
@@ -13,7 +8,8 @@ export class Personnage {
     vies = 3,
     bombesRestantes = 10,
 
-    sprites,
+    gameMap,
+
     isBombAtPixel,
     getBombes,
     BombClass,
@@ -33,11 +29,12 @@ export class Personnage {
         
         this.vies = vies;
         this.bombesRestantes = bombesRestantes;
+
+        this.gameMap = gameMap;
         
         this.dernierDepot = -Infinity;
         this.vivant = true;
 
-        this.sprites = sprites ;
         this.isBombAtPixel = isBombAtPixel;
         this.getBombes = getBombes;
         this.BombClass = BombClass;
@@ -100,12 +97,12 @@ export class Personnage {
 
 // -----------------------
 
-    caseDuPerso() {
-        return {
-            col: Math.floor((this.col + 20) / TILE_SIZE),
-            row: Math.floor((this.row + 20) / TILE_SIZE),
-        };
-    }
+  caseDuPerso() {
+      return {
+          col: Math.floor((this.col + 20) / this.gameMap.tileSize),
+          row: Math.floor((this.row + 20) / this.gameMap.tileSize),
+      };
+  }
 
 // ---------- HITBOXES ---------
     hitbox() {
@@ -124,10 +121,10 @@ export class Personnage {
     const bottom = row + 8 + 24 - 1;
 
     return !(
-      isBlockedAtPixel(left, top) ||
-      isBlockedAtPixel(right, top) ||
-      isBlockedAtPixel(left, bottom) ||
-      isBlockedAtPixel(right, bottom) ||
+      this.gameMap.isBlockedAtPixel(left, top) ||
+      this.gameMap.isBlockedAtPixel(right, top) ||
+      this.gameMap.isBlockedAtPixel(left, bottom) ||
+      this.gameMap.isBlockedAtPixel(right, bottom) ||
       this.isBombAtPixel(left, top) ||
       this.isBombAtPixel(right, top) ||
       this.isBombAtPixel(left, bottom) ||
@@ -148,7 +145,7 @@ export class Personnage {
 
     if (bombes.some((b) => b.col === col && b.row === row)) return false;
 
-    bombes.push(new this.BombClass(col, row, now, this));
+    bombes.push(new this.BombClass(col, row, now, this.gameMap , this));
     this.bombesRestantes--;
     this.dernierDepot = now;
 
@@ -221,12 +218,5 @@ export class Personnage {
       this.frame = 0;
       this.compteur = 0;
     }
-  }
-
-  draw(ctx) {
-    if (!this.vivant) return;
-
-    const img = this.sprites[this.couleur][this.direction][this.frame];
-    ctx.drawImage(img, this.col, this.row);
   }
 }
