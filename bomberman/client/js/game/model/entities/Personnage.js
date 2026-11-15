@@ -95,7 +95,6 @@ export class Personnage {
       return this.bombesRestantes;
     }
 
-// -----------------------
 
   caseDuPerso() {
       return {
@@ -164,6 +163,7 @@ export class Personnage {
     }
   }
 
+  // ----------- MàJ de postion du personage selon commande ----------
   update(keys) {
     if (!this.vivant) return;
 
