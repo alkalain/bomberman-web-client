@@ -2,12 +2,7 @@ export const BOMB_DELAI_ALLUMAGE = 1000;   // s'allume après 1 s
 export const BOMB_DELAI_EXPLOSION = 2000;  // explose après 2 s
 export const BOMB_DUREE_EXPLOSION = 500;   // flammes visibles 0,5 s
 export const BOMB_PORTEE = 2;              // 2 cases par direction
-/*
-const imgBombe = new Image();
-imgBombe.src = "img/bombe.png";
-const imgBombeAllumee = new Image();
-imgBombeAllumee.src = "img/bombe_allumee.png";
-*/
+
 export class Bomb {
   constructor(col, row, now, gameMap,owner = null) {
     this.col = col;
