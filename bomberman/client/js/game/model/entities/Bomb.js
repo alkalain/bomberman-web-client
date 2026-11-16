@@ -1,17 +1,13 @@
-const BOMB_DELAI_ALLUMAGE = 1000;   // s'allume après 1 s
-const BOMB_DELAI_EXPLOSION = 2000;  // explose après 2 s
-const BOMB_DUREE_EXPLOSION = 500;   // flammes visibles 0,5 s
-const BOMB_PORTEE = 2;              // 2 cases par direction
+export const BOMB_DELAI_ALLUMAGE = 1000;   // s'allume après 1 s
+export const BOMB_DELAI_EXPLOSION = 2000;  // explose après 2 s
+export const BOMB_DUREE_EXPLOSION = 500;   // flammes visibles 0,5 s
+export const BOMB_PORTEE = 2;              // 2 cases par direction
 
-const imgBombe = new Image();
-imgBombe.src = "img/bombe.png";
-const imgBombeAllumee = new Image();
-imgBombeAllumee.src = "img/bombe_allumee.png";
-
-class Bomb {
-  constructor(col, row, now, owner = null) {
+export class Bomb {
+  constructor(col, row, now, gameMap,owner = null) {
     this.col = col;
     this.row = row;
+    this.gameMap = gameMap;
     this.owner = owner;       // à qui elle appartient 
     this.pose = now;          // heure de pose
     this.etat = "normale";    // "normale" -> "allumee" -> "explosion"
@@ -52,36 +48,16 @@ class Bomb {
       for (let i = 1; i <= BOMB_PORTEE; i++) {
         const c = this.col + dc * i;
         const r = this.row + dr * i;
-        const type = map[r]?.[c];
+        const type = this.gameMap.getTileAt(c,r);
 
         if (type === undefined || type === 1) break;  // hors map ou mur
         cases.push({ col: c, row: r });
         if (type === 2) {                             // bloc cassable
-          map[r][c] = 0;
-            blocsDetruits.set(`${c},${r}`, Math.floor(Math.random() * imgsDecombres.length)); // marque la case comme détruite pour l'affichage
+          this.gameMap.destroyBlockAt(c,r) // marque la case comme détruite pour l'affichage
           break;
         }
       }
     }
     return cases;
-  }
-
-  draw(ctx, now) {
-    if (this.etat === "explosion") {
-      const progression = (now - this.debutExplosion) / BOMB_DUREE_EXPLOSION;
-      ctx.globalAlpha = 1 - progression * 0.6;
-      for (const c of this.cases) {
-        const x = c.col * TILE_SIZE;
-        const y = c.row * TILE_SIZE;
-        ctx.fillStyle = "orange";
-        ctx.fillRect(x + 4, y + 4, TILE_SIZE - 8, TILE_SIZE - 8);
-        ctx.fillStyle = "yellow";
-        ctx.fillRect(x + 14, y + 14, TILE_SIZE - 28, TILE_SIZE - 28);
-      }
-      ctx.globalAlpha = 1;
-    } else {
-      const img = this.etat === "allumee" ? imgBombeAllumee : imgBombe;
-      ctx.drawImage(img, this.col * TILE_SIZE, this.row * TILE_SIZE, TILE_SIZE, TILE_SIZE);
-    }
   }
 }
