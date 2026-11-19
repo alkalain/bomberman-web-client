@@ -522,6 +522,52 @@ h2 {
   margin-top: 12px;
 }
 
+/* Base commune à tous les boutons-images */
+.img-btn {
+  display: block;
+  border: none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  cursor: pointer;
+  padding: 0;
+  /* masque le texte tout en le gardant lisible par les lecteurs d'écran */
+  font-size: 0;
+  color: transparent;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  aspect-ratio: 640 / 290;
+}
+
+.img-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+  filter: brightness(1.15);
+}
+
+.img-btn:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+/* Une image par bouton : adapte les tailles à tes visuels */
+.btn-img-multi {
+  background-image: url('../img/cree.png');
+  width: 280px;
+}
+
+.btn-img-join {
+  background-image: url('../img/rejoindre.png');
+  width: 280px;
+}
+
+.btn-img-rules {
+  background-image: url('../img/regles.png');
+  width: 280px;
+}
+
+.btn-img-back {
+  background-image: url('../img/revenir.png');
+  width: 200px;
+}
 
 
 
