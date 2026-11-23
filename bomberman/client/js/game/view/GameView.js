@@ -139,6 +139,7 @@ export class GameView{
             10,
             this.canvas.height - 10,
         );
+        this.ctx.fillText(`Objet (E) : ${perso.objet ?? "aucun"}`, 10, this.canvas.height - 34);
     }
 
     // --------- DEATH ---------

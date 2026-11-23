@@ -29,6 +29,7 @@ export class Personnage {
     this.vies = vies;
     this.bombesRestantes = bombesRestantes;
     this.effets = {}; // nom de l'effet -> heure de fin
+    this.objet = null;   // objet stocké (nom du type) ou null
 
     this.gameMap = gameMap;
 
@@ -53,7 +54,8 @@ export class Personnage {
     this.frame = 0;
     this.compteur = 0;
     this.vivant = true;
-    this.effets = {}; //reset l'effet à chaque nouvelle partie. 
+    this.effets = {}; // reset l'effet à chaque nouvelle partie. 
+    this.objet = null; // objet stocké null au debut
   }
 
   getVitesse() {

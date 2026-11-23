@@ -2,7 +2,12 @@ import { GameView } from "./view/GameView.js";
 import { Personnage } from "./model/entities/Personnage.js";
 import { SPAWN_COULEUR, GameMap } from "./model/map.js";
 import { Bomb } from "./model/entities/Bomb.js";
-import { PowerUp, CHANCE_DROP, tirerType } from "./model/entities/PowerUp.js";
+import {
+  PowerUp,
+  CHANCE_DROP,
+  tirerType,
+  MODE_ITEM,
+} from "./model/entities/PowerUp.js";
 import { chargerAssets } from "./view/assets.js";
 
 const canvas = document.getElementById("game");
@@ -90,6 +95,7 @@ window.addEventListener("keydown", (e) => {
     }
     touches[e.key] = true;
     if (e.key === " ") perso.poserBombe();
+    if (e.key === "e" || e.key === "E") utiliserObjet(); // touche E pour utiliser un objet 
   }
 });
 
@@ -154,10 +160,24 @@ function updateItems() {
   if (i === -1) return; // pas d'item sur cette case
 
   const item = items[i];
-  if (item.type === "speed_boost") {
-    perso.activerEffet("rapide", 20000); // 20 secondes
+
+  if (MODE_ITEM[item.type] === "instantane") {
+    if (item.type === "speed_boost") perso.activerEffet("rapide", 20000); // 20 secondes
+    items.splice(i, 1);
+  } else if (!perso.objet) {
+    // objet à stocker : seulement si l'emplacement est libre
+    perso.objet = item.type;
+    items.splice(i, 1); // on retire l'item de la map
   }
-  items.splice(i, 1); // on retire l'item de la map
+  // emplacement plein : l'item reste au sol
+}
+
+// pour utiliser un objet avec E
+function utiliserObjet() {
+  if (!perso.getVivant() || !perso.objet) return;
+
+  console.log("Utilisé :", perso.objet);   
+  perso.objet = null;                      // l'emplacement se libère
 }
 
 // Y a-t-il une bombe solide à ce pixel ?
