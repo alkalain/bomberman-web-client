@@ -145,6 +145,19 @@ function updateBombes() {
   bombes = bombes.filter((b) => !b.estTerminee(now));
 }
 
+//fonction pour les items bonus/malus
+function updateItems() {
+  if (!perso.getVivant()) return;
+
+  const { col, row } = perso.caseDuPerso();
+  const i = items.findIndex((it) => it.col === col && it.row === row);
+  if (i === -1) return; // pas d'item sur cette case
+
+  const item = items[i];
+  console.log("Ramassé :", item.type); // juste pour vérifier
+  items.splice(i, 1); // on retire l'item de la map
+}
+
 // Y a-t-il une bombe solide à ce pixel ?
 function isBombAtPixel(x, y) {
   const col = Math.floor(x / tileSize);
@@ -180,6 +193,7 @@ function loop() {
   } else {
     perso.update(touches);
     updateBombes();
+    updateItems();
     gameView.drawJeu({
       perso: perso,
       bombes: bombes,
