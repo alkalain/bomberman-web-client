@@ -1,5 +1,5 @@
 export class Personnage {
-    constructor({
+  constructor({
     col = 100,
     row = 100,
     vitesse = 3,
@@ -14,104 +14,104 @@ export class Personnage {
     getBombes,
     BombClass,
     cooldownBombe,
-    } = {}){
+  } = {}) {
+    this.col = col;
+    this.row = row;
 
-        this.col = col;
-        this.row = row;
+    this.vitesse = vitesse;
+    this.couleur = couleur;
 
-        this.vitesse = vitesse;
-        this.couleur = couleur;
-        
-        this.direction = direction;
-        this.frame = 0;
-        this.compteur = 0;
-        this.vitesseAnim = 10;
-        
-        this.vies = vies;
-        this.bombesRestantes = bombesRestantes;
+    this.direction = direction;
+    this.frame = 0;
+    this.compteur = 0;
+    this.vitesseAnim = 10;
 
-        this.gameMap = gameMap;
-        
-        this.dernierDepot = -Infinity;
-        this.vivant = true;
+    this.vies = vies;
+    this.bombesRestantes = bombesRestantes;
+    this.effets = {}; // nom de l'effet -> heure de fin
 
-        this.isBombAtPixel = isBombAtPixel;
-        this.getBombes = getBombes;
-        this.BombClass = BombClass;
-        this.cooldownBombe = cooldownBombe;
-    }
-// -------- Getter/Setter ---------
-    setCouleur(couleur) {
-        this.couleur = couleur;
-    }
+    this.gameMap = gameMap;
 
-    setSpawn(col, row) {
-        this.col = col
-        this.row = row;
-        this.direction = "bas";
+    this.dernierDepot = -Infinity;
+    this.vivant = true;
 
-        this.frame = 0;
-        this.compteur = 0;
-        this.vivant = true;
-    }
-
-    getVitesse(){
-      return this.vitesse;
-    }
-
-    setDirection(direction){
-      this.direction = direction
-    }
-
-    setFrame(frame){
-      this.frame = frame;
-    }
-
-    setCompteur(compteur){
-      this.compteur = compteur
-    }
-
-    setEtat(etat){
-      this.etat = etat;
-    }
-
-    getVivant(){
-      return this.vivant;
-    }
-
-    setVies(nbVies){
-      this.vies += nbVies;
-    }
-
-    getVies(){
-      return this.vies;
-    }
-
-    setBombesRestantes(bombRest){
-      this.bombesRestantes=bombRest;
-    }
-
-    getBombesRestantes(){
-      return this.bombesRestantes;
-    }
-
-
-  caseDuPerso() {
-      return {
-          col: Math.floor((this.col + 20) / this.gameMap.tileSize),
-          row: Math.floor((this.row + 20) / this.gameMap.tileSize),
-      };
+    this.isBombAtPixel = isBombAtPixel;
+    this.getBombes = getBombes;
+    this.BombClass = BombClass;
+    this.cooldownBombe = cooldownBombe;
+  }
+  // -------- Getter/Setter ---------
+  setCouleur(couleur) {
+    this.couleur = couleur;
   }
 
-// ---------- HITBOXES ---------
-    hitbox() {
-      return {
-        left: this.col + 8,
-        right: this.col + 8 + 24,
-        top: this.row + 8,
-        bottom: this.row + 8 + 24,
-      };
-   }
+  setSpawn(col, row) {
+    this.col = col;
+    this.row = row;
+    this.direction = "bas";
+
+    this.frame = 0;
+    this.compteur = 0;
+    this.vivant = true;
+    this.effets = {}; //reset l'effet à chaque nouvelle partie. 
+  }
+
+  getVitesse() {
+    return this.vitesse;
+  }
+
+  setDirection(direction) {
+    this.direction = direction;
+  }
+
+  setFrame(frame) {
+    this.frame = frame;
+  }
+
+  setCompteur(compteur) {
+    this.compteur = compteur;
+  }
+
+  setEtat(etat) {
+    this.etat = etat;
+  }
+
+  getVivant() {
+    return this.vivant;
+  }
+
+  setVies(nbVies) {
+    this.vies += nbVies;
+  }
+
+  getVies() {
+    return this.vies;
+  }
+
+  setBombesRestantes(bombRest) {
+    this.bombesRestantes = bombRest;
+  }
+
+  getBombesRestantes() {
+    return this.bombesRestantes;
+  }
+
+  caseDuPerso() {
+    return {
+      col: Math.floor((this.col + 20) / this.gameMap.tileSize),
+      row: Math.floor((this.row + 20) / this.gameMap.tileSize),
+    };
+  }
+
+  // ---------- HITBOXES ---------
+  hitbox() {
+    return {
+      left: this.col + 8,
+      right: this.col + 8 + 24,
+      top: this.row + 8,
+      bottom: this.row + 8 + 24,
+    };
+  }
 
   canMoveTo(col, row) {
     const left = col + 8;
@@ -144,7 +144,7 @@ export class Personnage {
 
     if (bombes.some((b) => b.col === col && b.row === row)) return false;
 
-    bombes.push(new this.BombClass(col, row, now, this.gameMap , this));
+    bombes.push(new this.BombClass(col, row, now, this.gameMap, this));
     this.bombesRestantes--;
     this.dernierDepot = now;
 
@@ -163,25 +163,45 @@ export class Personnage {
     }
   }
 
+  // -------------------  EFFETS POUR LES ITEAMS BONUS/MALUS --------
+
+  // Lance un effet pour "duree" millisecondes
+  activerEffet(nom, duree) {
+    this.effets[nom] = performance.now() + duree;
+  }
+
+  // L'effet est-il encore actif ?
+  effetActif(nom) {
+    return (this.effets[nom] ?? 0) > performance.now();
+  }
+
+  // Vitesse réelle : la vitesse de base, modifiée par les effets en cours
+  vitesseActuelle() {
+    let v = this.vitesse;
+    if (this.effetActif("rapide")) v *= 1.8;
+    return v;
+  }
+
   // ----------- MàJ de postion du personage selon commande ----------
   update(keys) {
     if (!this.vivant) return;
+    const v = this.vitesseActuelle(); // va être repris pour mettre à jour la vitesse pour le bonus
 
     let dx = 0;
     let dy = 0;
     let dir = null;
 
     if (keys.ArrowRight) {
-      dx = this.vitesse;
+      dx = v; // on va mettre v à de this.vitesse pour l'update dans le bonus
       dir = "droite";
     } else if (keys.ArrowLeft) {
-      dx = -this.vitesse;
+      dx = -v;
       dir = "gauche";
     } else if (keys.ArrowUp) {
-      dy = -this.vitesse;
+      dy = -v;
       dir = "haut";
     } else if (keys.ArrowDown) {
-      dy = this.vitesse;
+      dy = v;
       dir = "bas";
     }
 

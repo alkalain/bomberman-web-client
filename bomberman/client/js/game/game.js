@@ -154,7 +154,9 @@ function updateItems() {
   if (i === -1) return; // pas d'item sur cette case
 
   const item = items[i];
-  console.log("Ramassé :", item.type); // juste pour vérifier
+  if (item.type === "speed_boost") {
+    perso.activerEffet("rapide", 20000); // 20 secondes
+  }
   items.splice(i, 1); // on retire l'item de la map
 }
 
