@@ -222,9 +222,10 @@ export class GameView{
         }
     }
 
-    drawJeu({perso, bombes, gameMap, mapAssets, sprites, bombSprites}) {
+    drawJeu({perso, bombes, items, gameMap, mapAssets, sprites, bombSprites}) {
         this.clear();
         this.drawMap(gameMap, mapAssets);
+        for (const it of items) it.draw(this.ctx, gameMap.tileSize);
         this.drawBombes(bombes, bombSprites, gameMap); // bombes et flammes sous le perso
         this.drawPersonnage(perso, sprites);
         this.drawHUD(perso);
