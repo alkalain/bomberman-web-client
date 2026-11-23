@@ -2,7 +2,7 @@ import { GameView } from "./view/GameView.js";
 import { Personnage } from "./model/entities/Personnage.js";
 import { SPAWN_COULEUR, GameMap } from "./model/map.js";
 import { Bomb } from "./model/entities/Bomb.js";
-import { PowerUp } from "./model/entities/PowerUp.js";
+import { PowerUp, CHANCE_DROP, tirerType } from "./model/entities/PowerUp.js";
 import { chargerAssets } from "./view/assets.js";
 
 const canvas = document.getElementById("game");
@@ -67,7 +67,6 @@ function demarrerJeu() {
 
   bombes = []; // on vide les bombes de la partie précédente
   items = []; // on vide les items de la partie précédente
-  items.push(new PowerUp(3, 1, "speed_boost")); // colonne 3, ligne 1, juste pour tester
 }
 
 // ---------- Clavier ----------
@@ -129,7 +128,15 @@ function appliquerDegats(cases) {
 function updateBombes() {
   const now = performance.now();
   for (const b of bombes) {
-    if (b.update(now)) appliquerDegats(b.cases);
+    if (b.update(now)) {
+      appliquerDegats(b.cases);
+      // pour chaque bloc détruit par cette explosion, peut-être un item
+      for (const c of b.blocsDetruits) {
+        if (Math.random() < CHANCE_DROP) {
+          items.push(new PowerUp(c.col, c.row, tirerType()));
+        }
+      }
+    }
     // Dès que le joueur est sorti de la case, la bombe devient solide
     if (!b.solide && b.etat !== "explosion" && !persoChevauche(b)) {
       b.solide = true;

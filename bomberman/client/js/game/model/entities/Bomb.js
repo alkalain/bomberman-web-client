@@ -14,6 +14,7 @@ export class Bomb {
     this.cases = [];          // cases touchées (remplies à l'explosion)
     this.debutExplosion = 0;
     this.solide = false;   // pas solide au début : le joueur est dessus et doit pouvoir sortir
+    this.blocsDetruits = [];   // cases où un bloc a été détruit par cette explosion
   }
 
   // Appelée à chaque frame. Renvoie true UNIQUEMENT au moment où elle explose.
@@ -54,6 +55,7 @@ export class Bomb {
         cases.push({ col: c, row: r });
         if (type === 2) {                             // bloc cassable
           this.gameMap.destroyBlockAt(c,r) // marque la case comme détruite pour l'affichage
+          this.blocsDetruits.push({ col: c, row: r });   // gere l'apparition d'item lorsqu'un bloc est détruit
           break;
         }
       }

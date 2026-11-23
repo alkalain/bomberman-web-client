@@ -16,3 +16,14 @@ export class PowerUp {
     ctx.fill();
   }
 }
+
+//export const CHANCE_DROP = 0.35;   // 35 % de chance par bloc détruit
+export const CHANCE_DROP = 1;   // 1 % de chance juste pour les tests
+
+// Types d'items existants.
+export const TYPES_ITEMS = ["speed_boost"];
+
+// Renvoie un nom de type au hasard
+export function tirerType() {
+  return TYPES_ITEMS[Math.floor(Math.random() * TYPES_ITEMS.length)];
+}
