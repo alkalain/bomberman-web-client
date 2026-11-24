@@ -2,12 +2,8 @@ import { GameView } from "./view/GameView.js";
 import { Personnage } from "./model/entities/Personnage.js";
 import { SPAWN_COULEUR, GameMap } from "./model/map.js";
 import { Bomb } from "./model/entities/Bomb.js";
-import {
-  PowerUp,
-  CHANCE_DROP,
-  tirerType,
-  MODE_ITEM,
-} from "./model/entities/PowerUp.js";
+import { PowerUp, CHANCE_DROP } from "./model/entities/PowerUp.js";
+import { ITEMS, tirerType } from "./model/entities/items.js";
 import { chargerAssets } from "./view/assets.js";
 
 const canvas = document.getElementById("game");
@@ -95,7 +91,7 @@ window.addEventListener("keydown", (e) => {
     }
     touches[e.key] = true;
     if (e.key === " ") perso.poserBombe();
-    if (e.key === "e" || e.key === "E") utiliserObjet(); // touche E pour utiliser un objet 
+    if (e.key === "e" || e.key === "E") utiliserObjet(); // touche E pour utiliser un objet
   }
 });
 
@@ -159,14 +155,14 @@ function updateItems() {
   const i = items.findIndex((it) => it.col === col && it.row === row);
   if (i === -1) return; // pas d'item sur cette case
 
-  const item = items[i];
+  const def = ITEMS[items[i].type];
 
-  if (MODE_ITEM[item.type] === "instantane") {
-    if (item.type === "speed_boost") perso.activerEffet("rapide", 20000); // 20 secondes
+  if (def.mode === "instantane") {
+    def.appliquer({ perso, bombes, gameMap });
     items.splice(i, 1);
   } else if (!perso.objet) {
     // objet à stocker : seulement si l'emplacement est libre
-    perso.objet = item.type;
+    perso.objet = items[i].type;
     items.splice(i, 1); // on retire l'item de la map
   }
   // emplacement plein : l'item reste au sol
@@ -176,8 +172,8 @@ function updateItems() {
 function utiliserObjet() {
   if (!perso.getVivant() || !perso.objet) return;
 
-  console.log("Utilisé :", perso.objet);   
-  perso.objet = null;                      // l'emplacement se libère
+  const resultat = ITEMS[perso.objet].utiliser({ perso, bombes, gameMap });
+  if (resultat !== false) perso.objet = null; // gardé si l'utilisation a échoué
 }
 
 // Y a-t-il une bombe solide à ce pixel ?

@@ -19,17 +19,3 @@ export class PowerUp {
 
 //export const CHANCE_DROP = 0.35;   // 35 % de chance par bloc détruit
 export const CHANCE_DROP = 1;   // 1 % de chance juste pour les tests
-
-// Types d'items existants.
-export const TYPES_ITEMS = ["speed_boost", "crotte"];
-
-// "instantane" : effet dès le ramassage / "stocke" : rangé dans l'emplacement, utilisé avec E
-export const MODE_ITEM = {
-  speed_boost: "instantane",
-  crotte: "stocke",
-};
-
-// Renvoie un nom de type au hasard
-export function tirerType() {
-  return TYPES_ITEMS[Math.floor(Math.random() * TYPES_ITEMS.length)];
-}
