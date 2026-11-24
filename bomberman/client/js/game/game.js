@@ -21,6 +21,7 @@ const {
   apercus,
   couleurs,
   bombSprites,
+  itemSprites,
   map: mapAssets,
 } = chargerAssets();
 
@@ -220,6 +221,7 @@ function loop() {
       mapAssets: mapAssets,
       sprites: sprites,
       bombSprites: bombSprites,
+      itemSprites: itemSprites,
     });
   }
 

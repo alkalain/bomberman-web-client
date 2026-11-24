@@ -1,3 +1,6 @@
+// importer les assets des items depuis le fichier items.js
+import { ITEMS } from "../model/entities/items.js";
+
 const couleurs = ["bleu", "rose", "rouge", "jaune"];
 const directions = ["droite", "gauche", "haut", "bas"];
 
@@ -47,5 +50,11 @@ export function chargerAssets() {
     );
   }
 
-  return { sprites, apercus, couleurs, bombSprites, map: mapAssets };
+  return { sprites, apercus, couleurs, bombSprites, itemSprites, map: mapAssets };
+}
+
+// une image par item : img/items/<clé de ITEMS>.png
+const itemSprites = {};
+for (const nom in ITEMS) {
+  itemSprites[nom] = charger(`img/items/${nom}.png`);
 }
