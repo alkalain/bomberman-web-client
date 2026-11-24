@@ -3,7 +3,7 @@ import { Personnage } from "./model/entities/Personnage.js";
 import { SPAWN_COULEUR, GameMap } from "./model/map.js";
 import { Bomb } from "./model/entities/Bomb.js";
 import { PowerUp, CHANCE_DROP } from "./model/entities/PowerUp.js";
-import { ITEMS, tirerType } from "./model/entities/items.js";
+import { ITEMS, tirerType, ramasser } from "./model/entities/items.js";
 import { chargerAssets } from "./view/assets.js";
 
 const canvas = document.getElementById("game");
@@ -33,6 +33,8 @@ const COOLDOWN_BOMBE = 2000; // 2 s entre deux dépôts
 const MAX_BOMBES = 10;
 let bombes = [];
 let items = []; // item bonus
+let projectiles = []; // projectiles de la slow bomba
+const ennemis = []; // vide pour l'instant, rempli quand il y auras un 2e joueur
 
 // ---------- État général ----------
 let etat = "selection"; // "selection" ou "jeu"
@@ -69,6 +71,10 @@ function demarrerJeu() {
 
   bombes = []; // on vide les bombes de la partie précédente
   items = []; // on vide les items de la partie précédente
+  projectiles = []; // on vide les projectiles de la partie précédente
+
+  //items.push(new PowerUp(2, 1, "hot")); pour faire spawn des items tests
+  //items.push(new PowerUp(1, 2, "wall_bomba"));
 }
 
 // ---------- Clavier ----------
@@ -148,6 +154,10 @@ function updateBombes() {
   bombes = bombes.filter((b) => !b.estTerminee(now));
 }
 
+function contexte() {
+  return { perso, bombes, items, projectiles, gameMap };
+}
+
 //fonction pour les items bonus/malus
 function updateItems() {
   if (!perso.getVivant()) return;
@@ -156,24 +166,14 @@ function updateItems() {
   const i = items.findIndex((it) => it.col === col && it.row === row);
   if (i === -1) return; // pas d'item sur cette case
 
-  const def = ITEMS[items[i].type];
-
-  if (def.mode === "instantane") {
-    def.appliquer({ perso, bombes, gameMap });
-    items.splice(i, 1);
-  } else if (!perso.objet) {
-    // objet à stocker : seulement si l'emplacement est libre
-    perso.objet = items[i].type;
-    items.splice(i, 1); // on retire l'item de la map
-  }
-  // emplacement plein : l'item reste au sol
+  if (ramasser(items[i].type, contexte())) items.splice(i, 1); // sinon il reste au sol
 }
 
 // pour utiliser un objet avec E
 function utiliserObjet() {
   if (!perso.getVivant() || !perso.objet) return;
 
-  const resultat = ITEMS[perso.objet].utiliser({ perso, bombes, gameMap });
+  const resultat = ITEMS[perso.objet].utiliser(contexte());
   if (resultat !== false) perso.objet = null; // gardé si l'utilisation a échoué
 }
 
@@ -182,6 +182,26 @@ function isBombAtPixel(x, y) {
   const col = Math.floor(x / tileSize);
   const row = Math.floor(y / tileSize);
   return bombes.some((b) => b.solide && b.col === col && b.row === row);
+}
+
+// ----- pour l'item wall slow ---------
+
+function updateProjectiles() {
+  projectiles = projectiles.filter((p) => {
+    p.x += p.dx;
+    p.y += p.dy;
+    if (gameMap.isBlockedAtPixel(p.x, p.y)) return false; // mur, bloc ou bord
+
+    for (const e of ennemis) {
+      const cx = e.col + gameMap.tileSize / 2;
+      const cy = e.row + gameMap.tileSize / 2;
+      if (Math.hypot(cx - p.x, cy - p.y) < 25) {
+        e.activerEffet("lent", 5000); // ennemi ralenti 5 s
+        return false;
+      }
+    }
+    return true;
+  });
 }
 
 // ---------- HITBOXES ----------
@@ -213,6 +233,7 @@ function loop() {
     perso.update(touches);
     updateBombes();
     updateItems();
+    updateProjectiles();
     gameView.drawJeu({
       perso: perso,
       bombes: bombes,
@@ -222,6 +243,7 @@ function loop() {
       sprites: sprites,
       bombSprites: bombSprites,
       itemSprites: itemSprites,
+      projectiles: projectiles,
     });
   }
 

@@ -85,6 +85,14 @@ export class GameMap {
     return true;
   }
 
+  placeBlockAt(col, row) {
+  if (this.getTileAt(col, row) !== 0) return false;   // seulement sur du sol libre
+
+  this.grid[row][col] = 2;
+  this.destroyedBlocks.delete(`${col},${row}`);       // plus de décombres sur cette case
+  return true;
+}
+
   tirerSol() {
     const total = SOLS.reduce((somme, s) => somme + s.poids, 0);
     let r = Math.random() * total;

@@ -29,7 +29,10 @@ export class Personnage {
     this.vies = vies;
     this.bombesRestantes = bombesRestantes;
     this.effets = {}; // nom de l'effet -> heure de fin
-    this.objet = null;   // objet stocké (nom du type) ou null
+    this.objet = null; // objet stocké (nom du type) ou null
+
+    this.hotRestant = 0; // nombre de bombes automatiques restantes
+    this.derniereCase = null; // dernière case traversée
 
     this.gameMap = gameMap;
 
@@ -54,8 +57,10 @@ export class Personnage {
     this.frame = 0;
     this.compteur = 0;
     this.vivant = true;
-    this.effets = {}; // reset l'effet à chaque nouvelle partie. 
+    this.effets = {}; // reset l'effet à chaque nouvelle partie.
     this.objet = null; // objet stocké null au debut
+    this.hotRestant = 0; // nombre de bombes automatiques restantes
+    this.derniereCase = null; // dernière case traversée
   }
 
   getVitesse() {
@@ -181,7 +186,35 @@ export class Personnage {
   vitesseActuelle() {
     let v = this.vitesse;
     if (this.effetActif("rapide")) v *= 1.8;
+    if (this.effetActif("lent")) v /= 2; // pour l'item hot 
     return v;
+  }
+
+  // POUR L'ITEM HOT
+
+  activerHot(nb) {
+    this.hotRestant = nb;
+    this.derniereCase = this.caseDuPerso();
+  }
+
+  // Une bombe à chaque nouvelle case, tant qu'il en reste
+  // les bombes ne consomment ni le stock, ni le cooldown 
+  updateHot() {
+    if (this.hotRestant <= 0) return;
+
+    const c = this.caseDuPerso();
+    if (c.col === this.derniereCase.col && c.row === this.derniereCase.row)
+      return;
+
+    this.derniereCase = c;
+    this.hotRestant--;
+
+    const bombes = this.getBombes();
+    if (!bombes.some((b) => b.col === c.col && b.row === c.row)) {
+      bombes.push(
+        new this.BombClass(c.col, c.row, performance.now(), this.gameMap, this),
+      );
+    }
   }
 
   // ----------- MàJ de postion du personage selon commande ----------
@@ -218,6 +251,7 @@ export class Personnage {
     }
 
     const moved = this.col !== oldX || this.row !== oldY;
+    this.updateHot();
 
     if (dir) {
       if (dir !== this.direction) {
