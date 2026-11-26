@@ -148,7 +148,6 @@ p {
   image-rendering: pixelated;
   position: relative;
   z-index: 2;
-  /* Détache le logo vert de la bordure supérieure du cadre */
   filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.85))
           drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
 }
@@ -175,13 +174,27 @@ p {
   margin: 0 0 10px 0;
 }
 
-/* --- CARTES JOUEURS (REMPLACE LE BLOC SOMBRE) --- */
+/* --- CARTES JOUEURS (FOND BAMBOU) --- */
 .scoreboard-table {
   width: 100%;
-  border-collapse: separate;
-  border-spacing: 0 8px; /* Espace vertical entre chaque carte joueur */
   margin-bottom: 12px;
   background-color: transparent;
+}
+
+/* Grille commune pour aligner l'en-tête et les 4 colonnes sur chaque ligne */
+.scoreboard-table thead tr,
+.scoreboard-table tbody tr {
+  display: grid;
+  grid-template-columns: 15% 31% 32% 22%;
+  align-items: center;
+  width: 100%;
+  padding: 0 14px;
+  box-sizing: border-box;
+}
+
+/* En-tête des colonnes SANS image de fond */
+.scoreboard-table thead tr {
+  background: transparent;
 }
 
 .scoreboard-table thead th {
@@ -190,56 +203,62 @@ p {
   color: #ffeaa7;
   text-shadow: 1px 1px 0 #102b13, -1px -1px 0 #102b13, 1px -1px 0 #102b13, -1px 1px 0 #102b13;
   font-size: 12px;
+  font-weight: normal;
   text-transform: uppercase;
-  padding: 0 10px 2px 10px;
+  padding: 0 8px 6px 8px;
 }
 
-/* Style par défaut d'une carte joueur (vert forêt semi-transparent) */
+/* --- ANIMATION D'APPARITION EN FONDU DES LIGNES --- */
+@keyframes apparitionLigne {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 .scoreboard-table tbody tr {
-  background-color: rgba(15, 42, 19, 0.84);
+  animation: apparitionLigne 0.4s ease-out both;
+}
+
+/* Décalage progressif ligne par ligne (du 1er au 4e) */
+.scoreboard-table tbody tr:nth-child(1) { animation-delay: 0.10s; }
+.scoreboard-table tbody tr:nth-child(2) { animation-delay: 0.25s; }
+.scoreboard-table tbody tr:nth-child(3) { animation-delay: 0.40s; }
+.scoreboard-table tbody tr:nth-child(4) { animation-delay: 0.55s; }
+
+/* Ligne joueur avec l'image de bambou recadrée sans les bandes noires */
+.scoreboard-table tbody tr {
+  height: 66px;
+  margin-bottom: 8px;
+  background-color: transparent;
+  background-image: url("../img/fond_bambou.png");
+  background-size: 105% 250%;
+  background-position: center;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
 }
 
 .scoreboard-table tbody td {
-  border-top: 2px solid #0a1f0d;
-  border-bottom: 2px solid #0a1f0d;
-  padding: 8px 12px;
-  vertical-align: middle;
+  border: none;
+  padding: 6px 8px;
 }
 
-.scoreboard-table tbody td:first-child {
-  border-left: 2px solid #0a1f0d;
-}
-
-.scoreboard-table tbody td:last-child {
-  border-right: 2px solid #0a1f0d;
-}
-
-/* Mise en avant dorée pour le 1er (Vainqueur) */
+/* Halo doré autour du bambou pour le 1er (Vainqueur) */
 .scoreboard-table tbody tr.row-rank-1 {
-  background-color: rgba(44, 62, 16, 0.92);
-  box-shadow: 0 0 12px rgba(251, 197, 49, 0.45);
+  filter: drop-shadow(0 0 6px rgba(251, 197, 49, 0.8)) brightness(1.06);
 }
 
-.scoreboard-table tbody tr.row-rank-1 td {
-  border-top: 2px solid #fbc531;
-  border-bottom: 2px solid #fbc531;
-}
-
-.scoreboard-table tbody tr.row-rank-1 td:first-child {
-  border-left: 2px solid #fbc531;
-}
-
-.scoreboard-table tbody tr.row-rank-1 td:last-child {
-  border-right: 2px solid #fbc531;
-}
-
-/* Cartes légèrement atténuées pour les joueurs éliminés */
+/* Lignes légèrement assombries pour les joueurs éliminés */
 .scoreboard-table tbody tr.row-dead {
-  background-color: rgba(18, 32, 21, 0.72);
+  filter: brightness(0.75);
 }
 
 .scoreboard-table tbody tr.row-dead .player-avatar {
-  filter: grayscale(65%) opacity(0.8);
+  filter: grayscale(65%);
 }
 
 /* --- CELLULE JOUEUR & CADRE AVATAR --- */
@@ -251,12 +270,12 @@ p {
 }
 
 .player-avatar-box {
-  width: 38px;
-  height: 38px;
+  width: 36px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgba(0, 0, 0, 0.35);
+  background-color: rgba(0, 0, 0, 0.45);
   border: 2px solid #ffffff;
   flex-shrink: 0;
 }
@@ -267,8 +286,8 @@ p {
 .border-rose  { border-color: #ff78cb; }
 
 .player-avatar {
-  width: 32px;
-  height: 32px;
+  width: 30px;
+  height: 30px;
   image-rendering: pixelated;
 }
 
@@ -278,9 +297,10 @@ p {
 }
 
 .player-name {
-  font-weight: bold;
+  font-weight: normal;
   font-size: 14px;
   color: #ffffff;
+  text-shadow: 1px 1px 0 #0a1f0d;
 }
 
 .player-color-tag {
@@ -291,8 +311,9 @@ p {
 /* --- STATUT & MORT --- */
 .status-badge {
   display: block;
-  font-weight: bold;
+  font-weight: normal;
   font-size: 13px;
+  text-shadow: 1px 1px 0 #0a1f0d;
 }
 
 .status-alive-winner {
@@ -332,7 +353,7 @@ p {
   width: 24px;
   height: 24px;
   image-rendering: pixelated;
-  transform: scale(1.65); /* Agrandit les sprites de vie sans déformer la carte */
+  transform: scale(1.65);
 }
 
 .life-icon-slot.lost .life-icon {
@@ -352,8 +373,8 @@ p {
 }
 
 .scoreboard-btn {
-  font-family: monospace;
-  font-weight: bold;
+  font-family: "VCR OSD Mono", monospace;
+  font-weight: normal;
   padding: 8px 14px;
   border: 3px solid #0a1f0d;
   box-shadow: 0 3px 0 #0a1f0d;
