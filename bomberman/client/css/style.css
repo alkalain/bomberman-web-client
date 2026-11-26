@@ -111,7 +111,7 @@ h2 {
 .lilypad-nav {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    /*gap: 15px;*/
     width: 280px;
 }
 
@@ -557,6 +557,7 @@ h2 {
 .btn-img-join {
   background-image: url('../img/rejoindre.png');
   width: 280px;
+  margin-bottom: -5%;
 }
 
 .btn-img-rules {
@@ -566,7 +567,8 @@ h2 {
 
 .btn-img-back {
   background-image: url('../img/revenir.png');
-  width: 200px;
+  width: 280px;
+  margin-top: -5%;
 }
 
 
