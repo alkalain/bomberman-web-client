@@ -10,7 +10,6 @@
     <h1>Bomberman</h1>
     <p>Use the arrow keys to move and spacebar to place bombs.</p>
 
-    <!-- Barre d'action pour afficher/tester le scoreboard de fin -->
     <div class="top-actions">
       <button id="btn-open-scoreboard" class="scoreboard-btn scoreboard-btn-primary" type="button">
         🏆 Afficher le Scoreboard de fin
@@ -18,31 +17,64 @@
     </div>
 
     <div id="game-container">
-      <canvas id="game" width="792" height="500" style="border:1px solid black"></canvas>
+      
+      <!-- HUD DES VIES AU-DESSUS DE LA MAP -->
+      <div class="hud">
+        <!-- Joueur 1 -->
+        <div class="hud-bloc bleu">
+          <img src="img/bleu/apercu1.png" alt="J1" />
+          <span>❤️ 3</span>
+        </div>
 
-      <!-- Scoreboard de fin de partie (4 joueurs) -->
-      <div id="scoreboard-overlay" class="scoreboard-overlay" role="dialog" aria-labelledby="scoreboard-title">
+        <!-- Joueur 2 -->
+        <div class="hud-bloc jaune">
+          <img src="img/jaune/apercu1.png" alt="J2" />
+          <span>❤️ 3</span>
+        </div>
+
+        <!-- Rectangle vide pour le timer -->
+        <div class="hud-timer"></div>
+
+        <!-- Joueur 3 -->
+        <div class="hud-bloc rouge">
+          <img src="img/rouge/apercu1.png" alt="J3" />
+          <span>❤️ 3</span>
+        </div>
+
+        <!-- Joueur 4 -->
+        <div class="hud-bloc rose">
+          <img src="img/rose/apercu1.png" alt="J4" />
+          <span>❤️ 3</span>
+        </div>
+      </div>
+
+      <canvas id="game" width="792" height="500"></canvas>
+
+      <!-- Scoreboard de fin de partie -->
+      <div id="scoreboard-overlay" class="scoreboard-overlay">
         <div class="scoreboard-modal">
+          
+          <!-- Logo en haut -->
+          <img src="img/logo.png" alt="Logo BoomBastic Frogz" class="scoreboard-logo" />
+
           <div class="scoreboard-header">
             <span class="scoreboard-badge-fin">FIN DE LA PARTIE</span>
             <h2 id="scoreboard-title">CLASSEMENT FINAL</h2>
-            <p id="scoreboard-subtitle" class="scoreboard-subtitle">
-              Récapitulatif de la survie et des éliminations (4 joueurs)
-            </p>
+            <p id="scoreboard-subtitle" class="scoreboard-subtitle"></p>
           </div>
 
           <div class="scoreboard-table-wrapper">
             <table class="scoreboard-table" id="scoreboard-table">
               <thead>
                 <tr>
-                  <th class="col-rang">Rang</th>
-                  <th class="col-joueur">Joueur</th>
-                  <th class="col-statut">Statut / Ordre de mort</th>
-                  <th class="col-pv">Points de vie restants</th>
+                  <th>Rang</th>
+                  <th>Joueur</th>
+                  <th>Statut</th>
+                  <th>Points de vie</th>
                 </tr>
               </thead>
               <tbody id="scoreboard-body">
-                <!-- Lignes générées dynamiquement par UI/scoreboard.js -->
+                <!-- Rempli automatiquement par scoreboard.js -->
               </tbody>
             </table>
           </div>
@@ -55,6 +87,7 @@
               🎮 Retour au jeu
             </button>
           </div>
+
         </div>
       </div>
     </div>
