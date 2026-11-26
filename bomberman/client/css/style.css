@@ -1,427 +1,376 @@
-/* ---------- Styles existants du jeu ---------- */
+/* --- POLICES PERSONNALISÉES --- */
+@font-face {
+  font-family: "Kiwi Soda";
+  src: url("../fonts/KiwiSoda.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: "VCR OSD Mono";
+  src: url("../fonts/VCR_OSD_MONO.ttf") format("truetype");
+  font-weight: normal;
+  font-style: normal;
+}
+
+/* --- PAGE GÉNÉRALE --- */
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #181a20;
-    color: #f1f5f9;
-    margin: 0;
-    padding: 16px;
-    text-align: center;
+  background-color: #2f3640;
+  color: #ffffff;
+  font-family: monospace;
+  text-align: center;
+  margin: 0;
+  padding: 15px;
 }
 
 h1 {
-    margin: 8px 0 4px 0;
-    font-size: 2rem;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: #f8fafc;
-    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+  color: #a3cb38;
+  margin: 0 0 5px 0;
+  font-size: 2rem;
+  text-transform: uppercase;
 }
 
 p {
-    margin: 0 0 12px 0;
-    color: #94a3b8;
+  margin: 0 0 12px 0;
+  color: #94a3b8;
 }
 
 .top-actions {
-    margin-bottom: 14px;
-    display: flex;
-    justify-content: center;
-    gap: 12px;
+  margin: 10px 0 14px 0;
+  display: flex;
+  justify-content: center;
+  gap: 12px;
 }
 
+/* Empile le HUD au-dessus du canvas */
 #game-container {
-    position: relative;
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
 }
 
+/* --- HUD DES VIES --- */
+.hud {
+  display: flex;
+  width: 50%; /* Même largeur que #game */
+  background-color: #1e272e;
+  border: 4px solid #ffffff;
+  border-bottom: none;
+  box-sizing: border-box;
+  padding: 5px;
+  gap: 5px;
+}
+
+.hud-bloc {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 4px 10px;
+  border: 2px solid #000000;
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.hud-bloc img {
+  width: 28px;
+  height: 28px;
+  image-rendering: pixelated;
+}
+
+.bleu  { background-color: #192a56; }
+.jaune { background-color: #6b5308; }
+.rouge { background-color: #5e1908; }
+.rose  { background-color: #691b28; }
+
+/* Rectangle vide au centre pour le futur timer */
+.hud-timer {
+  width: 100px;
+  background-color: #f368e0;
+  border: 2px solid #000000;
+}
+
+/* --- ZONE DE JEU (CANVAS) --- */
 #game {
-    width: 50%;
-    background-color: #f8fafc;
-    border-radius: 8px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  width: 50%;
+  background-color: #000000;
+  border: 4px solid #ffffff;
+  box-sizing: border-box;
 }
 
-/* ---------- Scoreboard de fin de partie ---------- */
+/* --- FOND SOMBRE DU SCOREBOARD --- */
 .scoreboard-overlay {
-    position: fixed;
-    inset: 0;
-    background: rgba(10, 12, 18, 0.82);
-    backdrop-filter: blur(4px);
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 1000;
-    padding: 20px;
-    transition: opacity 0.25s ease, visibility 0.25s ease;
+  display: flex;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.8);
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
 }
 
 .scoreboard-overlay.hidden {
-    opacity: 0;
-    visibility: hidden;
-    pointer-events: none;
+  display: none;
 }
 
+/* --- BOÎTE PRINCIPALE (IMAGE DE FOND PIXEL ART) --- */
 .scoreboard-modal {
-    background: linear-gradient(180deg, #222634 0%, #191c26 100%);
-    border: 2px solid #3b4254;
-    border-radius: 16px;
-    width: 100%;
-    max-width: 760px;
-    padding: 24px 28px;
-    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
-    text-align: left;
-    animation: scoreboardPop 0.25s ease-out;
+  position: relative;
+  background-color: transparent;
+  background-image: url("../img/scoreboard-bg.png");
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  image-rendering: pixelated;
+
+  font-family: "VCR OSD Mono", monospace;
+  -webkit-font-smoothing: none;
+
+  padding: 36px 64px 40px 72px;
+  width: 92%;
+  max-width: 780px;
+  margin-top: 18px;
+  overflow: visible;
+  box-sizing: border-box;
 }
 
-@keyframes scoreboardPop {
-    from {
-        transform: translateY(12px) scale(0.97);
-        opacity: 0;
-    }
-    to {
-        transform: translateY(0) scale(1);
-        opacity: 1;
-    }
+/* --- LOGO EN HAUT --- */
+.scoreboard-logo {
+  display: block;
+  width: 220px;
+  height: auto;
+  margin: -50px auto 6px auto;
+  image-rendering: pixelated;
+  position: relative;
+  z-index: 2;
+  /* Détache le logo vert de la bordure supérieure du cadre */
+  filter: drop-shadow(0 4px 5px rgba(0, 0, 0, 0.85))
+          drop-shadow(0 0 6px rgba(255, 255, 255, 0.25));
 }
 
-.scoreboard-header {
-    text-align: center;
-    margin-bottom: 20px;
-}
-
+/* --- TITRES --- */
 .scoreboard-badge-fin {
-    display: inline-block;
-    background: rgba(245, 158, 11, 0.18);
-    color: #fbbf24;
-    border: 1px solid rgba(251, 191, 36, 0.4);
-    font-size: 0.75rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    padding: 4px 12px;
-    border-radius: 999px;
-    margin-bottom: 8px;
+  display: none;
 }
 
-.scoreboard-header h2 {
-    margin: 4px 0 6px 0;
-    font-size: 1.75rem;
-    color: #ffffff;
-    letter-spacing: 1px;
+#scoreboard-title {
+  font-family: "Kiwi Soda", sans-serif;
+  color: #f3c0c4;
+  text-shadow: 2px 2px 0 #123015, -1px -1px 0 #123015;
+  margin: 4px 0 6px 0;
+  font-size: 30px;
+  font-weight: normal;
+  letter-spacing: 1.5px;
 }
 
 .scoreboard-subtitle {
-    margin: 0;
-    font-size: 0.92rem;
-    color: #94a3b8;
+  color: #ffffff;
+  text-shadow: 1px 1px 0 #123015;
+  font-size: 12px;
+  margin: 0 0 10px 0;
 }
 
-/* ---------- Tableau du classement ---------- */
-.scoreboard-table-wrapper {
-    overflow-x: auto;
-    border-radius: 12px;
-    border: 1px solid #2e3446;
-    background: #141720;
-}
-
+/* --- CARTES JOUEURS (REMPLACE LE BLOC SOMBRE) --- */
 .scoreboard-table {
-    width: 100%;
-    border-collapse: collapse;
-    color: #e2e8f0;
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0 8px; /* Espace vertical entre chaque carte joueur */
+  margin-bottom: 12px;
+  background-color: transparent;
 }
 
 .scoreboard-table thead th {
-    background: #1d2230;
-    color: #94a3b8;
-    font-size: 0.78rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.8px;
-    padding: 13px 16px;
-    border-bottom: 1px solid #2e3446;
-    text-align: left;
+  background-color: transparent;
+  border: none;
+  color: #ffeaa7;
+  text-shadow: 1px 1px 0 #102b13, -1px -1px 0 #102b13, 1px -1px 0 #102b13, -1px 1px 0 #102b13;
+  font-size: 12px;
+  text-transform: uppercase;
+  padding: 0 10px 2px 10px;
 }
 
+/* Style par défaut d'une carte joueur (vert forêt semi-transparent) */
 .scoreboard-table tbody tr {
-    border-bottom: 1px solid #232838;
-    transition: background-color 0.15s ease;
+  background-color: rgba(15, 42, 19, 0.84);
 }
 
-.scoreboard-table tbody tr:last-child {
-    border-bottom: none;
+.scoreboard-table tbody td {
+  border-top: 2px solid #0a1f0d;
+  border-bottom: 2px solid #0a1f0d;
+  padding: 8px 12px;
+  vertical-align: middle;
 }
 
-.scoreboard-table tbody tr:hover {
-    background-color: rgba(255, 255, 255, 0.03);
+.scoreboard-table tbody td:first-child {
+  border-left: 2px solid #0a1f0d;
 }
 
+.scoreboard-table tbody td:last-child {
+  border-right: 2px solid #0a1f0d;
+}
+
+/* Mise en avant dorée pour le 1er (Vainqueur) */
 .scoreboard-table tbody tr.row-rank-1 {
-    background: linear-gradient(90deg, rgba(250, 204, 21, 0.12) 0%, rgba(250, 204, 21, 0.02) 100%);
+  background-color: rgba(44, 62, 16, 0.92);
+  box-shadow: 0 0 12px rgba(251, 197, 49, 0.45);
 }
 
+.scoreboard-table tbody tr.row-rank-1 td {
+  border-top: 2px solid #fbc531;
+  border-bottom: 2px solid #fbc531;
+}
+
+.scoreboard-table tbody tr.row-rank-1 td:first-child {
+  border-left: 2px solid #fbc531;
+}
+
+.scoreboard-table tbody tr.row-rank-1 td:last-child {
+  border-right: 2px solid #fbc531;
+}
+
+/* Cartes légèrement atténuées pour les joueurs éliminés */
 .scoreboard-table tbody tr.row-dead {
-    opacity: 0.88;
+  background-color: rgba(18, 32, 21, 0.72);
 }
 
-.scoreboard-table td {
-    padding: 14px 16px;
-    vertical-align: middle;
+.scoreboard-table tbody tr.row-dead .player-avatar {
+  filter: grayscale(65%) opacity(0.8);
 }
 
-/* ---------- Colonne Rang ---------- */
-.col-rang {
-    width: 90px;
-    text-align: center !important;
-}
-
-.rank-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 48px;
-    height: 34px;
-    padding: 0 10px;
-    border-radius: 8px;
-    font-weight: 800;
-    font-size: 0.95rem;
-}
-
-.rank-1 {
-    background: rgba(250, 204, 21, 0.2);
-    color: #fde047;
-    border: 1px solid rgba(250, 204, 21, 0.5);
-    box-shadow: 0 0 12px rgba(250, 204, 21, 0.2);
-}
-
-.rank-2 {
-    background: rgba(226, 232, 240, 0.15);
-    color: #e2e8f0;
-    border: 1px solid rgba(203, 213, 225, 0.4);
-}
-
-.rank-3 {
-    background: rgba(217, 119, 6, 0.2);
-    color: #fdba74;
-    border: 1px solid rgba(249, 115, 22, 0.45);
-}
-
-.rank-4 {
-    background: rgba(100, 116, 139, 0.18);
-    color: #94a3b8;
-    border: 1px solid rgba(100, 116, 139, 0.35);
-}
-
-/* ---------- Colonne Joueur ---------- */
+/* --- CELLULE JOUEUR & CADRE AVATAR --- */
 .player-cell {
-    display: flex;
-    align-items: center;
-    gap: 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  text-align: left;
 }
 
 .player-avatar-box {
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: #23293a;
-    border: 2px solid #3b4254;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.35);
+  border: 2px solid #ffffff;
+  flex-shrink: 0;
 }
+
+.border-bleu  { border-color: #4bcffa; }
+.border-jaune { border-color: #fbc531; }
+.border-rouge { border-color: #ff5e57; }
+.border-rose  { border-color: #ff78cb; }
 
 .player-avatar {
-    width: 40px;
-    height: 40px;
-    image-rendering: pixelated;
-    object-fit: contain;
-}
-
-.row-dead .player-avatar {
-    filter: grayscale(85%);
-    opacity: 0.65;
+  width: 32px;
+  height: 32px;
+  image-rendering: pixelated;
 }
 
 .player-info {
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
+  display: flex;
+  flex-direction: column;
 }
 
 .player-name {
-    font-weight: 700;
-    font-size: 1rem;
-    color: #f8fafc;
+  font-weight: bold;
+  font-size: 14px;
+  color: #ffffff;
 }
 
 .player-color-tag {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    font-size: 0.76rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
+  font-size: 11px;
+  color: #b8e994;
 }
 
-.color-dot {
-    width: 8px;
-    height: 8px;
-    border-radius: 50%;
-    display: inline-block;
-}
-
-/* Couleurs associées aux 4 joueurs */
-.color-bleu { color: #38bdf8; }
-.color-bleu .color-dot { background-color: #0284c7; }
-.border-bleu { border-color: #0284c7 !important; }
-
-.color-rouge { color: #f87171; }
-.color-rouge .color-dot { background-color: #dc2626; }
-.border-rouge { border-color: #dc2626 !important; }
-
-.color-jaune { color: #facc15; }
-.color-jaune .color-dot { background-color: #eab308; }
-.border-jaune { border-color: #eab308 !important; }
-
-.color-rose { color: #f472b6; }
-.color-rose .color-dot { background-color: #db2777; }
-.border-rose { border-color: #db2777 !important; }
-
-/* ---------- Colonne Statut / Ordre de mort ---------- */
+/* --- STATUT & MORT --- */
 .status-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 11px;
-    border-radius: 999px;
-    font-size: 0.84rem;
-    font-weight: 700;
+  display: block;
+  font-weight: bold;
+  font-size: 13px;
 }
 
 .status-alive-winner {
-    background: rgba(34, 197, 94, 0.18);
-    color: #4ade80;
-    border: 1px solid rgba(74, 222, 128, 0.45);
+  color: #fbc531;
 }
 
 .status-alive {
-    background: rgba(16, 185, 129, 0.15);
-    color: #34d399;
-    border: 1px solid rgba(52, 211, 153, 0.35);
+  color: #a3cb38;
 }
 
 .status-dead {
-    background: rgba(239, 68, 68, 0.16);
-    color: #f87171;
-    border: 1px solid rgba(248, 113, 113, 0.35);
+  color: #ff7675;
 }
 
 .death-time {
-    display: block;
-    font-size: 0.76rem;
-    color: #94a3b8;
-    margin-top: 4px;
+  display: block;
+  font-size: 11px;
+  color: #ced6e0;
+  margin-top: 3px;
 }
 
-/* ---------- Colonne Points de vie restants (Images de vie) ---------- */
+/* --- ICÔNES DE POINTS DE VIE --- */
 .lives-container {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
 }
 
 .lives-icons {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-}
-
-/* Les images de vie font 49x53 avec le sprite 9x9 centré au milieu :
-   ce conteneur zoom proprement en pixel-art sur la tête de grenouille */
-.life-icon-slot {
-    width: 30px;
-    height: 30px;
-    border-radius: 7px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    position: relative;
-}
-
-.life-icon-slot.lost {
-    opacity: 0.22;
-    filter: grayscale(100%);
-    border-style: dashed;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
 }
 
 .life-icon {
-    width: 49px;
-    height: 53px;
-    image-rendering: pixelated;
-    transform: scale(2.4);
-    flex-shrink: 0;
-    pointer-events: none;
+  width: 24px;
+  height: 24px;
+  image-rendering: pixelated;
+  transform: scale(1.65); /* Agrandit les sprites de vie sans déformer la carte */
+}
+
+.life-icon-slot.lost .life-icon {
+  filter: grayscale(100%) opacity(0.3);
 }
 
 .lives-count-text {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: #cbd5e1;
-    white-space: nowrap;
+  font-size: 11px;
+  color: #dcdde1;
 }
 
-.row-dead .lives-count-text {
-    color: #64748b;
-}
-
-/* ---------- Pied du Scoreboard & Boutons ---------- */
+/* --- BOUTONS DU BAS --- */
 .scoreboard-footer {
-    margin-top: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 12px;
-    flex-wrap: wrap;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
 }
 
 .scoreboard-btn {
-    cursor: pointer;
-    font-family: inherit;
-    font-size: 0.9rem;
-    font-weight: 700;
-    padding: 10px 18px;
-    border-radius: 10px;
-    border: none;
-    transition: transform 0.12s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  font-family: monospace;
+  font-weight: bold;
+  padding: 8px 14px;
+  border: 3px solid #0a1f0d;
+  box-shadow: 0 3px 0 #0a1f0d;
+  cursor: pointer;
 }
 
 .scoreboard-btn:active {
-    transform: scale(0.98);
+  transform: translateY(2px);
+  box-shadow: 0 1px 0 #0a1f0d;
 }
 
 .scoreboard-btn-primary {
-    background: #3b82f6;
-    color: #ffffff;
-    box-shadow: 0 4px 14px rgba(59, 130, 246, 0.35);
-}
-
-.scoreboard-btn-primary:hover {
-    background: #2563eb;
+  background-color: #fbc531;
+  color: #0a1f0d;
 }
 
 .scoreboard-btn-secondary {
-    background: #2d3548;
-    color: #e2e8f0;
-    border: 1px solid #475569;
-}
-
-.scoreboard-btn-secondary:hover {
-    background: #374151;
+  background-color: #f5f6fa;
+  color: #0a1f0d;
 }
