@@ -34,6 +34,8 @@ export class Personnage {
     this.hotRestant = 0; // nombre de bombes automatiques restantes
     this.derniereCase = null; // dernière case traversée
 
+    this.dernierDegat = -Infinity; // degat que prend le joueurs pour animation
+
     this.gameMap = gameMap;
 
     this.dernierDepot = -Infinity;
@@ -61,6 +63,7 @@ export class Personnage {
     this.objet = null; // objet stocké null au debut
     this.hotRestant = 0; // nombre de bombes automatiques restantes
     this.derniereCase = null; // dernière case traversée
+    this.dernierDegat = -Infinity; // degat que prend le joueurs pour animation
   }
 
   getVitesse() {
@@ -160,8 +163,10 @@ export class Personnage {
 
   prendreDegat() {
     if (!this.vivant) return;
+    if (this.estInvincible()) return;   // juste apres avoir pris une bombe pour éviter d'en prendre une deuxième d'affilé
 
     this.vies--;
+    this.dernierDegat = performance.now();   // pour l'animation
     console.log("Touché ! Vies restantes :", this.vies);
 
     if (this.vies <= 0) {
@@ -186,7 +191,7 @@ export class Personnage {
   vitesseActuelle() {
     let v = this.vitesse;
     if (this.effetActif("rapide")) v *= 1.8;
-    if (this.effetActif("lent")) v /= 2; // pour l'item hot 
+    if (this.effetActif("lent")) v /= 2; // pour l'item hot
     return v;
   }
 
@@ -198,7 +203,7 @@ export class Personnage {
   }
 
   // Une bombe à chaque nouvelle case, tant qu'il en reste
-  // les bombes ne consomment ni le stock, ni le cooldown 
+  // les bombes ne consomment ni le stock, ni le cooldown
   updateHot() {
     if (this.hotRestant <= 0) return;
 
@@ -215,6 +220,18 @@ export class Personnage {
         new this.BombClass(c.col, c.row, performance.now(), this.gameMap, this),
       );
     }
+  }
+
+  // ----- quand un pesonnage reçoit un dégat ------
+
+  // Invincible juste après un dégât
+  estInvincible() {
+    return performance.now() - this.dernierDegat < 1000;
+  }
+
+  // Animation de dégât en cours ?
+  estBlesse() {
+    return this.estInvincible();
   }
 
   // ----------- MàJ de postion du personage selon commande ----------

@@ -167,6 +167,7 @@ export class GameView {
   }
 
   // --------- DEATH ---------
+  // ---- A AMELIORER -----
   drawMort() {
     // Voile sombre sur toute la map
     this.ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
@@ -255,8 +256,13 @@ export class GameView {
   drawPersonnageComplet(p, sprites, tileSize) {
     if (!p.getVivant()) return; // un mort n'est plus dessiné
 
-    this.drawPersonnage(p, sprites);
-
+    if (p.estBlesse()) {
+      // le personnage disparaît/réapparaît toutes les 100 ms
+      const visible = Math.floor(performance.now() / 100) % 2 === 0;
+      if (visible) this.drawPersonnage(p, sprites);
+    } else {
+      this.drawPersonnage(p, sprites);
+    }
     if (p.effetActif("lent")) {
       this.ctx.beginPath();
       this.ctx.arc(
