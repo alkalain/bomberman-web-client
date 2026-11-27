@@ -1,8 +1,169 @@
-#game-container{
-    width: 100%;
-    display: flex;
-    justify-content: center;
+/* =========================================
+   loading screen
+   ========================================= */
+
+.loading-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem;
+  background: rgba(8, 22, 16, 0.55);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 0.2s ease, visibility 0.2s ease;
 }
-#game{
-    width: 50%;
+
+.loading-overlay.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loading-card {
+  position: relative;
+  z-index: 10000;
+  width: 100%;
+  max-width: 600px;
+  min-height: 360px;
+  padding: 0.5rem 2.4rem 1.8rem;
+  border-radius: 20px;
+  background: url("../img/cadre-fond.webp") center / 100% 100% no-repeat;
+  color: #ffffff;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+.loading-header,
+.loading-footer {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.loading-header {
+    margin-top: 10px;
+}
+
+.loading-logo {
+  display: block;
+  max-width: 260px;
+  width: 100%;
+  height: auto;
+  transform: translateY(-10px);
+}
+
+.loading-title,
+.loading-detail {
+  font-family: "Silkscreen", monospace;
+  font-weight: 700;
+  color: #fffef5;
+  -webkit-font-smoothing: none;
+  font-smooth: never;
+  /* Contour noir pixel net tout autour des lettres */
+  text-shadow:
+    -2px -2px 0 #111611,
+     0px -2px 0 #111611,
+     2px -2px 0 #111611,
+    -2px  0px 0 #111611,
+     2px  0px 0 #111611,
+    -2px  2px 0 #111611,
+     0px  2px 0 #111611,
+     2px  2px 0 #111611,
+     0px  3px 0 #111611;
+}
+.loading-title {
+  margin: 0 0 0.35rem;
+  font-size: 1.45rem;
+}
+
+.loading-detail {
+  margin: 0 0 0.9rem;
+  font-size: 0.85rem;
+  color: #f3f7e8;
+}
+
+
+/* Barre de progression style pixel art vert */
+.loading-bar-track {
+  width: 100%;
+  max-width: 420px;
+  height: 24px;
+  padding: 3px;
+  border-radius: 999px;
+  border: 3px solid #122414;
+  background: #17331e;
+  overflow: hidden;
+}
+
+.loading-bar-fill {
+  width: 48%;
+  height: 100%;
+  border-radius: 999px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #78e028,
+    #78e028 10px,
+    #55be17 10px,
+    #55be17 20px
+  );
+  border: 1px solid #c9ff8a;
+  animation: loadingPondSlide 1.35s infinite ease-in-out;
+}
+
+/* Bouton image "Retour au menu" */
+.loading-img-btn {
+  margin-top: 1rem;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s ease, filter 0.12s ease;
+}
+
+.loading-img-btn img {
+  display: block;
+  max-width: 210px;
+  width: 100%;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+.loading-img-btn:hover {
+  transform: scale(1.05);
+  filter: brightness(1.06);
+}
+
+.loading-img-btn:active {
+  transform: scale(0.97);
+}
+
+.loading-img-btn.is-hidden {
+  display: none;
+}
+
+@keyframes loadingPondSlide {
+  0% {
+    transform: translateX(-85%);
+  }
+  50% {
+    transform: translateX(65%);
+  }
+  100% {
+    transform: translateX(215%);
+  }
 }

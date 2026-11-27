@@ -3,8 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <title>BoomBastic Frogz</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Silkscreen:wght@700&display=swap" />
     <link rel="stylesheet" href="css/style.css" />
-    <script src="js/game/game.js" type="module"></script>
+    <script src="js/loading.js" type="module"></script>
   </head>
   <body>
     <h1>BoomBastic Frogz</h1>
@@ -12,5 +13,28 @@
     <div id="game-container">
       <canvas id="game" width="792" height="500" style="border:1px solid black"></canvas>
     </div>
+
+<!-- Popup de chargement pendant la connexion WebSocket -->
+<div id="loading-overlay" class="loading-overlay is-hidden" role="dialog" aria-modal="true" aria-live="polite">
+  <div class="loading-card">
+    <div class="loading-header">
+      <img src="img/logo.webp" alt="Logo BoomBastic Frogz" class="loading-logo" />
+    </div>
+
+    <div class="loading-footer">
+      <p id="loading-title" class="loading-title">Chargement...</p>
+      <p id="loading-detail" class="loading-detail">Connexion à la marre en cours...</p>
+
+      <div class="loading-bar-track" aria-hidden="true">
+        <div class="loading-bar-fill"></div>
+      </div>
+
+      <button id="loading-back-menu" type="button" class="loading-img-btn is-hidden" aria-label="Retour au menu">
+        <img src="img/retour-menu.png" alt="Retour au menu" />
+      </button>
+    </div>
+  </div>
+</div>
+
   </body>
 </html>
