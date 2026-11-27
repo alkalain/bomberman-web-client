@@ -251,8 +251,30 @@ export class GameView {
     }
   }
 
+  // Dessine un personnage vivant + l'anneau violet s'il est ralenti
+  drawPersonnageComplet(p, sprites, tileSize) {
+    if (!p.getVivant()) return; // un mort n'est plus dessiné
+
+    this.drawPersonnage(p, sprites);
+
+    if (p.effetActif("lent")) {
+      this.ctx.beginPath();
+      this.ctx.arc(
+        p.col + tileSize / 2,
+        p.row + tileSize / 2,
+        28,
+        0,
+        Math.PI * 2,
+      );
+      this.ctx.strokeStyle = "#9b59b6";
+      this.ctx.lineWidth = 3;
+      this.ctx.stroke();
+    }
+  }
+
   drawJeu({
     perso,
+    ennemis, // --> A SUPPRIMER APRES LES TESTS
     bombes,
     items,
     gameMap,
@@ -268,7 +290,11 @@ export class GameView {
       it.draw(this.ctx, gameMap.tileSize, itemSprites[it.type]);
     this.drawBombes(bombes, bombSprites, gameMap); // bombes et flammes sous le perso
     this.drawProjectiles(projectiles);
-    this.drawPersonnage(perso, sprites);
+
+    this.drawPersonnageComplet(perso, sprites, gameMap.tileSize);
+    for (const e of ennemis)
+      this.drawPersonnageComplet(e, sprites, gameMap.tileSize);
+
     this.drawHUD(perso);
     if (!perso.getVivant()) this.drawMort();
   }

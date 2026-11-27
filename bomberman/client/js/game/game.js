@@ -53,6 +53,16 @@ const perso = new Personnage({
   cooldownBombe: COOLDOWN_BOMBE,
 });
 
+// CLASSE TEST
+const ennemi = new Personnage({
+  vitesse: 2,
+  gameMap,
+  isBombAtPixel,
+  getBombes: () => bombes,
+  BombClass: Bomb,
+  cooldownBombe: COOLDOWN_BOMBE,
+});
+
 const tileSize = gameMap.tileSize;
 
 const SPAWN_INTERVALLE = 8000; // un item toutes les 8 s
@@ -82,6 +92,16 @@ function demarrerJeu() {
 
   //items.push(new PowerUp(2, 1, "hot")); pour faire spawn des items tests
   //items.push(new PowerUp(1, 2, "wall_bomba"));
+
+  // TEST A SUPPRIMER
+
+  // le bot prend une couleur différente de la tienne, dans son coin
+  const couleurBot = couleurs.find((c) => c !== perso.couleur);
+  ennemi.setCouleur(couleurBot);
+  const spawnBot = gameMap.getSpawnPosition(SPAWN_COULEUR[couleurBot]);
+  ennemi.setSpawn(spawnBot.x, spawnBot.y);
+  ennemis.length = 0; // `ennemis` est un const : on le vide au lieu de le réassigner
+  ennemis.push(ennemi);
 }
 
 // ---------- Clavier ----------
@@ -138,6 +158,13 @@ function appliquerDegats(cases) {
   if (cases.some((c) => c.col === p.col && c.row === p.row)) {
     perso.prendreDegat();
     console.log("Touché ! Vies restantes :", perso.getVies());
+  }
+
+  // PERMET DE METTRE DES DEGATS AUX ENNEMIES
+  for (const e of ennemis) {
+    if (!e.getVivant()) continue;
+    const c = e.caseDuPerso();
+    if (cases.some((k) => k.col === c.col && k.row === c.row)) e.prendreDegat();
   }
 }
 
@@ -239,6 +266,24 @@ function updateSpawnItems() {
   if (type) items.push(new PowerUp(c.col, c.row, type));
 }
 
+// ------- POUR L'ENNEMI A SUPP ----
+
+const DIRECTIONS_BOT = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
+
+function updateEnnemis() {
+  const now = performance.now();
+  for (const e of ennemis) {
+    // toutes les 0,3 à 1 s, il choisit une nouvelle direction
+    if (!e.prochainChoix || now > e.prochainChoix) {
+      const d =
+        DIRECTIONS_BOT[Math.floor(Math.random() * DIRECTIONS_BOT.length)];
+      e.touchesBot = { [d]: true };
+      e.prochainChoix = now + 300 + Math.random() * 700;
+    }
+    e.update(e.touchesBot ?? {});
+  }
+}
+
 // ---------- HITBOXES ----------
 
 // La hitbox du joueur chevauche-t-elle la case de la bombe ?
@@ -266,12 +311,14 @@ function loop() {
     });
   } else {
     perso.update(touches);
+    updateEnnemis(); // --> A SUPPRIMER APRES LES TESTS
     updateBombes();
     updateItems();
     updateSpawnItems();
     updateProjectiles();
     gameView.drawJeu({
       perso: perso,
+      ennemis: ennemis, // --> A SUPPRIMER APRES LES TESTS
       bombes: bombes,
       items: items,
       gameMap: gameMap,
