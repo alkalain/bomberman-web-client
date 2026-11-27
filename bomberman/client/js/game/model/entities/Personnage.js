@@ -1,5 +1,5 @@
 export class Personnage {
-    constructor({
+  constructor({
     col = 100,
     row = 100,
     vitesse = 3,
@@ -14,104 +14,114 @@ export class Personnage {
     getBombes,
     BombClass,
     cooldownBombe,
-    } = {}){
+  } = {}) {
+    this.col = col;
+    this.row = row;
 
-        this.col = col;
-        this.row = row;
+    this.vitesse = vitesse;
+    this.couleur = couleur;
 
-        this.vitesse = vitesse;
-        this.couleur = couleur;
-        
-        this.direction = direction;
-        this.frame = 0;
-        this.compteur = 0;
-        this.vitesseAnim = 10;
-        
-        this.vies = vies;
-        this.bombesRestantes = bombesRestantes;
+    this.direction = direction;
+    this.frame = 0;
+    this.compteur = 0;
+    this.vitesseAnim = 10;
 
-        this.gameMap = gameMap;
-        
-        this.dernierDepot = -Infinity;
-        this.vivant = true;
+    this.vies = vies;
+    this.bombesRestantes = bombesRestantes;
+    this.effets = {}; // nom de l'effet -> heure de fin
+    this.objet = null; // objet stocké (nom du type) ou null
 
-        this.isBombAtPixel = isBombAtPixel;
-        this.getBombes = getBombes;
-        this.BombClass = BombClass;
-        this.cooldownBombe = cooldownBombe;
-    }
-// -------- Getter/Setter ---------
-    setCouleur(couleur) {
-        this.couleur = couleur;
-    }
+    this.hotRestant = 0; // nombre de bombes automatiques restantes
+    this.derniereCase = null; // dernière case traversée
 
-    setSpawn(col, row) {
-        this.col = col
-        this.row = row;
-        this.direction = "bas";
+    this.dernierDegat = -Infinity; // degat que prend le joueurs pour animation
 
-        this.frame = 0;
-        this.compteur = 0;
-        this.vivant = true;
-    }
+    this.gameMap = gameMap;
 
-    getVitesse(){
-      return this.vitesse;
-    }
+    this.dernierDepot = -Infinity;
+    this.vivant = true;
 
-    setDirection(direction){
-      this.direction = direction
-    }
-
-    setFrame(frame){
-      this.frame = frame;
-    }
-
-    setCompteur(compteur){
-      this.compteur = compteur
-    }
-
-    setEtat(etat){
-      this.etat = etat;
-    }
-
-    getVivant(){
-      return this.vivant;
-    }
-
-    setVies(nbVies){
-      this.vies += nbVies;
-    }
-
-    getVies(){
-      return this.vies;
-    }
-
-    setBombesRestantes(bombRest){
-      this.bombesRestantes=bombRest;
-    }
-
-    getBombesRestantes(){
-      return this.bombesRestantes;
-    }
-
-
-  caseDuPerso() {
-      return {
-          col: Math.floor((this.col + 20) / this.gameMap.tileSize),
-          row: Math.floor((this.row + 20) / this.gameMap.tileSize),
-      };
+    this.isBombAtPixel = isBombAtPixel;
+    this.getBombes = getBombes;
+    this.BombClass = BombClass;
+    this.cooldownBombe = cooldownBombe;
+  }
+  // -------- Getter/Setter ---------
+  setCouleur(couleur) {
+    this.couleur = couleur;
   }
 
-// ---------- HITBOXES ---------
-    hitbox() {
-      return {
-        left: this.col + 8,
-        right: this.col + 8 + 24,
-        top: this.row + 8,
-        bottom: this.row + 8 + 24,
-      };
-   }
+  setSpawn(col, row) {
+    this.col = col;
+    this.row = row;
+    this.direction = "bas";
+
+    this.frame = 0;
+    this.compteur = 0;
+    this.vivant = true;
+    this.effets = {}; // reset l'effet à chaque nouvelle partie.
+    this.objet = null; // objet stocké null au debut
+    this.hotRestant = 0; // nombre de bombes automatiques restantes
+    this.derniereCase = null; // dernière case traversée
+    this.dernierDegat = -Infinity; // degat que prend le joueurs pour animation
+  }
+
+  getVitesse() {
+    return this.vitesse;
+  }
+
+  setDirection(direction) {
+    this.direction = direction;
+  }
+
+  setFrame(frame) {
+    this.frame = frame;
+  }
+
+  setCompteur(compteur) {
+    this.compteur = compteur;
+  }
+
+  setEtat(etat) {
+    this.etat = etat;
+  }
+
+  getVivant() {
+    return this.vivant;
+  }
+
+  setVies(nbVies) {
+    this.vies += nbVies;
+  }
+
+  getVies() {
+    return this.vies;
+  }
+
+  setBombesRestantes(bombRest) {
+    this.bombesRestantes = bombRest;
+  }
+
+  getBombesRestantes() {
+    return this.bombesRestantes;
+  }
+
+  caseDuPerso() {
+    return {
+      col: Math.floor((this.col + 20) / this.gameMap.tileSize),
+      row: Math.floor((this.row + 20) / this.gameMap.tileSize),
+    };
+  }
+
+  // ---------- HITBOXES ---------
+  hitbox() {
+    return {
+      left: this.col + 8,
+      right: this.col + 8 + 24,
+      top: this.row + 8,
+      bottom: this.row + 8 + 24,
+    };
+  }
 
   canMoveTo(col, row) {
     const left = col + 8;
@@ -144,7 +154,7 @@ export class Personnage {
 
     if (bombes.some((b) => b.col === col && b.row === row)) return false;
 
-    bombes.push(new this.BombClass(col, row, now, this.gameMap , this));
+    bombes.push(new this.BombClass(col, row, now, this.gameMap, this));
     this.bombesRestantes--;
     this.dernierDepot = now;
 
@@ -153,8 +163,10 @@ export class Personnage {
 
   prendreDegat() {
     if (!this.vivant) return;
+    if (this.estInvincible()) return;   // juste apres avoir pris une bombe pour éviter d'en prendre une deuxième d'affilé
 
     this.vies--;
+    this.dernierDegat = performance.now();   // pour l'animation
     console.log("Touché ! Vies restantes :", this.vies);
 
     if (this.vies <= 0) {
@@ -163,25 +175,85 @@ export class Personnage {
     }
   }
 
+  // -------------------  EFFETS POUR LES ITEAMS BONUS/MALUS --------
+
+  // Lance un effet pour "duree" millisecondes
+  activerEffet(nom, duree) {
+    this.effets[nom] = performance.now() + duree;
+  }
+
+  // L'effet est-il encore actif ?
+  effetActif(nom) {
+    return (this.effets[nom] ?? 0) > performance.now();
+  }
+
+  // Vitesse réelle : la vitesse de base, modifiée par les effets en cours
+  vitesseActuelle() {
+    let v = this.vitesse;
+    if (this.effetActif("rapide")) v *= 1.8;
+    if (this.effetActif("lent")) v /= 2; // pour l'item hot
+    return v;
+  }
+
+  // POUR L'ITEM HOT
+
+  activerHot(nb) {
+    this.hotRestant = nb;
+    this.derniereCase = this.caseDuPerso();
+  }
+
+  // Une bombe à chaque nouvelle case, tant qu'il en reste
+  // les bombes ne consomment ni le stock, ni le cooldown
+  updateHot() {
+    if (this.hotRestant <= 0) return;
+
+    const c = this.caseDuPerso();
+    if (c.col === this.derniereCase.col && c.row === this.derniereCase.row)
+      return;
+
+    this.derniereCase = c;
+    this.hotRestant--;
+
+    const bombes = this.getBombes();
+    if (!bombes.some((b) => b.col === c.col && b.row === c.row)) {
+      bombes.push(
+        new this.BombClass(c.col, c.row, performance.now(), this.gameMap, this),
+      );
+    }
+  }
+
+  // ----- quand un pesonnage reçoit un dégat ------
+
+  // Invincible juste après un dégât
+  estInvincible() {
+    return performance.now() - this.dernierDegat < 1000;
+  }
+
+  // Animation de dégât en cours ?
+  estBlesse() {
+    return this.estInvincible();
+  }
+
   // ----------- MàJ de postion du personage selon commande ----------
   update(keys) {
     if (!this.vivant) return;
+    const v = this.vitesseActuelle(); // va être repris pour mettre à jour la vitesse pour le bonus
 
     let dx = 0;
     let dy = 0;
     let dir = null;
 
     if (keys.ArrowRight) {
-      dx = this.vitesse;
+      dx = v; // on va mettre v à de this.vitesse pour l'update dans le bonus
       dir = "droite";
     } else if (keys.ArrowLeft) {
-      dx = -this.vitesse;
+      dx = -v;
       dir = "gauche";
     } else if (keys.ArrowUp) {
-      dy = -this.vitesse;
+      dy = -v;
       dir = "haut";
     } else if (keys.ArrowDown) {
-      dy = this.vitesse;
+      dy = v;
       dir = "bas";
     }
 
@@ -196,6 +268,7 @@ export class Personnage {
     }
 
     const moved = this.col !== oldX || this.row !== oldY;
+    this.updateHot();
 
     if (dir) {
       if (dir !== this.direction) {

@@ -1,10 +1,9 @@
 import { GameView } from "./view/GameView.js";
 import { Personnage } from "./model/entities/Personnage.js";
-import {
-  SPAWN_COULEUR,
-  GameMap
-} from "./model/map.js";
+import { SPAWN_COULEUR, GameMap } from "./model/map.js";
 import { Bomb } from "./model/entities/Bomb.js";
+import { PowerUp, CHANCE_DROP } from "./model/entities/PowerUp.js";
+import { ITEMS, tirerType, ramasser } from "./model/entities/items.js";
 import { chargerAssets } from "./view/assets.js";
 
 const canvas = document.getElementById("game");
@@ -18,7 +17,12 @@ const gameMap = new GameMap();
 
 // ---------- Chargement des images ----------
 const {
-  sprites, apercus, couleurs,bombSprites, map:mapAssets,
+  sprites,
+  apercus,
+  couleurs,
+  bombSprites,
+  itemSprites,
+  map: mapAssets,
 } = chargerAssets();
 
 // ---------- rendering game ----------
@@ -28,6 +32,9 @@ const gameView = new GameView(canvas);
 const COOLDOWN_BOMBE = 2000; // 2 s entre deux dépôts
 const MAX_BOMBES = 10;
 let bombes = [];
+let items = []; // item bonus
+let projectiles = []; // projectiles de la slow bomba
+const ennemis = []; // vide pour l'instant, rempli quand il y auras un 2e joueur
 
 // ---------- État général ----------
 let etat = "selection"; // "selection" ou "jeu"
@@ -46,7 +53,22 @@ const perso = new Personnage({
   cooldownBombe: COOLDOWN_BOMBE,
 });
 
+// CLASSE TEST
+const ennemi = new Personnage({
+  vitesse: 2,
+  gameMap,
+  isBombAtPixel,
+  getBombes: () => bombes,
+  BombClass: Bomb,
+  cooldownBombe: COOLDOWN_BOMBE,
+});
+
 const tileSize = gameMap.tileSize;
+
+const SPAWN_INTERVALLE = 8000; // un item toutes les 8 s
+const MAX_ITEMS_MAP = 6; // pas plus de 6 items au sol en même temps
+let prochainSpawn = 0;
+
 function demarrerJeu() {
   etat = "jeu";
 
@@ -54,7 +76,7 @@ function demarrerJeu() {
   // coin de spawn correspondant à la couleur choisie
   const spawn = gameMap.getSpawnPosition(SPAWN_COULEUR[perso.couleur] ?? 0);
 
-  perso.setSpawn(spawn.x,spawn.y);
+  perso.setSpawn(spawn.x, spawn.y);
 
   perso.setDirection("bas");
   perso.setFrame(0);
@@ -62,7 +84,24 @@ function demarrerJeu() {
 
   perso.setBombesRestantes(MAX_BOMBES);
 
-  bombes = [];
+  bombes = []; // on vide les bombes de la partie précédente
+  items = []; // on vide les items de la partie précédente
+  projectiles = []; // on vide les projectiles de la partie précédente
+
+  prochainSpawn = performance.now() + SPAWN_INTERVALLE; // on planifie le premier spawn d'item
+
+  //items.push(new PowerUp(2, 1, "hot")); pour faire spawn des items tests
+  //items.push(new PowerUp(1, 2, "wall_bomba"));
+
+  // TEST A SUPPRIMER
+
+  // le bot prend une couleur différente de la tienne, dans son coin
+  const couleurBot = couleurs.find((c) => c !== perso.couleur);
+  ennemi.setCouleur(couleurBot);
+  const spawnBot = gameMap.getSpawnPosition(SPAWN_COULEUR[couleurBot]);
+  ennemi.setSpawn(spawnBot.x, spawnBot.y);
+  ennemis.length = 0; // `ennemis` est un const : on le vide au lieu de le réassigner
+  ennemis.push(ennemi);
 }
 
 // ---------- Clavier ----------
@@ -86,6 +125,7 @@ window.addEventListener("keydown", (e) => {
     }
     touches[e.key] = true;
     if (e.key === " ") perso.poserBombe();
+    if (e.key === "e" || e.key === "E") utiliserObjet(); // touche E pour utiliser un objet
   }
 });
 
@@ -119,12 +159,27 @@ function appliquerDegats(cases) {
     perso.prendreDegat();
     console.log("Touché ! Vies restantes :", perso.getVies());
   }
+
+  // PERMET DE METTRE DES DEGATS AUX ENNEMIES
+  for (const e of ennemis) {
+    if (!e.getVivant()) continue;
+    const c = e.caseDuPerso();
+    if (cases.some((k) => k.col === c.col && k.row === c.row)) e.prendreDegat();
+  }
 }
 
 function updateBombes() {
   const now = performance.now();
   for (const b of bombes) {
-    if (b.update(now)) appliquerDegats(b.cases);
+    if (b.update(now)) {
+      appliquerDegats(b.cases);
+      // pour chaque bloc détruit par cette explosion, peut-être un item
+      for (const c of b.blocsDetruits) {
+        if (Math.random() < CHANCE_DROP) {
+          items.push(new PowerUp(c.col, c.row, tirerType()));
+        }
+      }
+    }
     // Dès que le joueur est sorti de la case, la bombe devient solide
     if (!b.solide && b.etat !== "explosion" && !persoChevauche(b)) {
       b.solide = true;
@@ -133,12 +188,100 @@ function updateBombes() {
   bombes = bombes.filter((b) => !b.estTerminee(now));
 }
 
+function contexte() {
+  return { perso, bombes, items, projectiles, gameMap };
+}
+
+//fonction pour les items bonus/malus
+function updateItems() {
+  if (!perso.getVivant()) return;
+
+  const { col, row } = perso.caseDuPerso();
+  const i = items.findIndex((it) => it.col === col && it.row === row);
+  if (i === -1) return; // pas d'item sur cette case
+
+  if (ramasser(items[i].type, contexte())) items.splice(i, 1); // sinon il reste au sol
+}
+
+// pour utiliser un objet avec E
+function utiliserObjet() {
+  if (!perso.getVivant() || !perso.objet) return;
+
+  const resultat = ITEMS[perso.objet].utiliser(contexte());
+  if (resultat !== false) perso.objet = null; // gardé si l'utilisation a échoué
+}
 
 // Y a-t-il une bombe solide à ce pixel ?
 function isBombAtPixel(x, y) {
   const col = Math.floor(x / tileSize);
   const row = Math.floor(y / tileSize);
   return bombes.some((b) => b.solide && b.col === col && b.row === row);
+}
+
+// ----- pour l'item wall slow ---------
+
+function updateProjectiles() {
+  projectiles = projectiles.filter((p) => {
+    p.x += p.dx;
+    p.y += p.dy;
+    if (gameMap.isBlockedAtPixel(p.x, p.y)) return false; // mur, bloc ou bord
+
+    for (const e of ennemis) {
+      const cx = e.col + gameMap.tileSize / 2;
+      const cy = e.row + gameMap.tileSize / 2;
+      if (Math.hypot(cx - p.x, cy - p.y) < 25) {
+        e.activerEffet("lent", 5000); // ennemi ralenti 5 s
+        return false;
+      }
+    }
+    return true;
+  });
+}
+
+// ------------ pour les items qui spawn solo sur la map ---------------
+
+function updateSpawnItems() {
+  const now = performance.now();
+  if (!perso.getVivant() || now < prochainSpawn) return;
+  prochainSpawn = now + SPAWN_INTERVALLE;
+
+  if (items.length >= MAX_ITEMS_MAP) return;
+
+  // cases libres : sol, sans item, sans bombe, pas sous le joueur
+  const p = perso.caseDuPerso();
+  const libres = [];
+  for (let row = 0; row < gameMap.height; row++) {
+    for (let col = 0; col < gameMap.width; col++) {
+      if (gameMap.getTileAt(col, row) !== 0) continue;
+      if (items.some((it) => it.col === col && it.row === row)) continue;
+      if (bombes.some((b) => b.col === col && b.row === row)) continue;
+      if (p.col === col && p.row === row) continue;
+      libres.push({ col, row });
+    }
+  }
+  if (libres.length === 0) return;
+
+  const c = libres[Math.floor(Math.random() * libres.length)];
+  const type = tirerType((n) => ITEMS[n].spawnAuto);
+  if (type) items.push(new PowerUp(c.col, c.row, type));
+}
+
+// ------- POUR L'ENNEMI A SUPP ----
+
+const DIRECTIONS_BOT = ["ArrowRight", "ArrowLeft", "ArrowUp", "ArrowDown"];
+
+function updateEnnemis() {
+  const now = performance.now();
+  for (const e of ennemis) {
+    // toutes les 0,3 à 1 s, il choisit une nouvelle direction
+    if (!e.prochainChoix || now > e.prochainChoix) {
+      const d =
+        DIRECTIONS_BOT[Math.floor(Math.random() * DIRECTIONS_BOT.length)];
+      e.touchesBot = { [d]: true };
+      e.prochainChoix = now + 300 + Math.random() * 700;
+    }
+    e.update(e.touchesBot ?? {});
+  }
 }
 
 // ---------- HITBOXES ----------
@@ -168,14 +311,22 @@ function loop() {
     });
   } else {
     perso.update(touches);
+    updateEnnemis(); // --> A SUPPRIMER APRES LES TESTS
     updateBombes();
+    updateItems();
+    updateSpawnItems();
+    updateProjectiles();
     gameView.drawJeu({
       perso: perso,
+      ennemis: ennemis, // --> A SUPPRIMER APRES LES TESTS
       bombes: bombes,
+      items: items,
       gameMap: gameMap,
       mapAssets: mapAssets,
       sprites: sprites,
       bombSprites: bombSprites,
+      itemSprites: itemSprites,
+      projectiles: projectiles,
     });
   }
 
