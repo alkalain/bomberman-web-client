@@ -108,6 +108,17 @@ export const ITEMS = {
       });
     },
   },
+
+  bomba: {
+    nom: "Bombe +",
+    mode: "instantane",
+    poids: 30, // fréquent
+    spawnAuto: true, // pour faire spawn des items sur la map 
+    appliquer({ perso }) {
+      // +2 bombes, plafonné à 10
+      perso.setBombesRestantes(Math.min(perso.getBombesRestantes() + 2, 10));
+    },
+  },
 };
 
 // les poids sont utilisés pour le tirage aléatoire : un item rare a un petit poids, un item courant a un poids plus grand

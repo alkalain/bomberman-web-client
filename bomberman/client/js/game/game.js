@@ -54,6 +54,11 @@ const perso = new Personnage({
 });
 
 const tileSize = gameMap.tileSize;
+
+const SPAWN_INTERVALLE = 8000; // un item toutes les 8 s
+const MAX_ITEMS_MAP = 6; // pas plus de 6 items au sol en même temps
+let prochainSpawn = 0;
+
 function demarrerJeu() {
   etat = "jeu";
 
@@ -72,6 +77,8 @@ function demarrerJeu() {
   bombes = []; // on vide les bombes de la partie précédente
   items = []; // on vide les items de la partie précédente
   projectiles = []; // on vide les projectiles de la partie précédente
+
+  prochainSpawn = performance.now() + SPAWN_INTERVALLE; // on planifie le premier spawn d'item
 
   //items.push(new PowerUp(2, 1, "hot")); pour faire spawn des items tests
   //items.push(new PowerUp(1, 2, "wall_bomba"));
@@ -204,6 +211,34 @@ function updateProjectiles() {
   });
 }
 
+// ------------ pour les items qui spawn solo sur la map ---------------
+
+function updateSpawnItems() {
+  const now = performance.now();
+  if (!perso.getVivant() || now < prochainSpawn) return;
+  prochainSpawn = now + SPAWN_INTERVALLE;
+
+  if (items.length >= MAX_ITEMS_MAP) return;
+
+  // cases libres : sol, sans item, sans bombe, pas sous le joueur
+  const p = perso.caseDuPerso();
+  const libres = [];
+  for (let row = 0; row < gameMap.height; row++) {
+    for (let col = 0; col < gameMap.width; col++) {
+      if (gameMap.getTileAt(col, row) !== 0) continue;
+      if (items.some((it) => it.col === col && it.row === row)) continue;
+      if (bombes.some((b) => b.col === col && b.row === row)) continue;
+      if (p.col === col && p.row === row) continue;
+      libres.push({ col, row });
+    }
+  }
+  if (libres.length === 0) return;
+
+  const c = libres[Math.floor(Math.random() * libres.length)];
+  const type = tirerType((n) => ITEMS[n].spawnAuto);
+  if (type) items.push(new PowerUp(c.col, c.row, type));
+}
+
 // ---------- HITBOXES ----------
 
 // La hitbox du joueur chevauche-t-elle la case de la bombe ?
@@ -233,6 +268,7 @@ function loop() {
     perso.update(touches);
     updateBombes();
     updateItems();
+    updateSpawnItems();
     updateProjectiles();
     gameView.drawJeu({
       perso: perso,
