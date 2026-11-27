@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bombercroack</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+
+<!--
+    <h1>Bomberman</h1>
+    <p>Use the arrow keys to move and spacebar to place bombs.</p>
+    <div id="game-container">
+      <canvas id="game" width="792" height="500" style="border:1px solid black"></canvas>
+    </div>
+  -->
+
+    <!-- Éléments animés de fond -->
+    <div id="frogs-background"></div>
+
+    <!-- 1. ÉCRAN DU MENU PRINCIPAL -->
+    <div id="menu-screen" class="screen">
+
+      <img src="./img/fondmenu.webp" alt="Logo ss" width="150">
+
+
+      <!-- Navigation style nénuphars avec Multijoueur, Rejoindre et Règles -->
+      <div class="lilypad-nav">
+        <button id="btn-multi" class="lilypad-btn">Mode multijoueur</button>
+        <button id="btn-join" class="lilypad-btn">Rejoindre une Partie</button>
+        <button id="btn-rules" class="lilypad-btn">📜 Règles du Marécage</button>
+      </div>
+    </div>
+
+    <!-- 2. ÉCRAN DE PRÉPARATION (Choix du pseudo & Personnage) -->
+    <div id="setup-screen" class="screen hidden">
+      <h2 id="setup-title">Configuration de la Grenouille</h2>
+      
+      <div class="player-setup">
+        <label for="username">Nom de votre grenouille :</label>
+        <input type="text" id="username" placeholder="ex: Kro_Kro" maxlength="15" />
+      </div>
+
+      <!-- Sélection du personnage (Skin / Couleur) -->
+      <div class="character-selection">
+        <p>Choisissez votre Grenouille :</p>
+        <div class="frog-options">
+          <button class="frog-choice active" data-skin="green">🐸 Verte</button>
+          <button class="frog-choice" data-skin="blue">🔷 Bleue</button>
+          <button class="frog-choice" data-skin="red">🔴 Rouge</button>
+          <button class="frog-choice" data-skin="yellow">🟡 Dorée</button>
+        </div>
+      </div>
+
+      <button id="btn-start-game" class="lilypad-btn">Sauter dans l'Étang ! 🌊</button>
+      <button id="btn-back-setup" class="lilypad-btn secondary-btn">Retour</button>
+    </div>
+
+    <!-- 3. ÉCRAN DU JEU (Canvas d'origine) -->
+    <div id="game-screen" class="screen hidden">
+      <div id="game-container">
+        <canvas id="game" width="792" height="500" style="border:1px solid black"></canvas>
+      </div>
+      <button id="btn-back-menu" class="lilypad-btn secondary-btn">Quitter la partie</button>
+    </div>
+
+    <!-- 4. ÉCRAN DU TABLEAU DES SCORES (MongoDB obligatoire) -->
+    <div id="scoreboard-screen" class="screen hidden">
+      <h2>🏆 Meilleurs Croasseurs (Scoreboard)</h2>
+      <table class="scoreboard-table">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Joueur</th>
+            <th>Victoires</th>
+          </tr>
+        </thead>
+        <tbody id="scoreboard-body">
+          <!-- Les scores MongoDB seront injectés ici -->
+        </tbody>
+      </table>
+      <button id="btn-back-from-scores" class="lilypad-btn">Retour au Menu</button>
+    </div>
+
+    <!-- 5. ÉCRAN DES RÈGLES -->
+    <div id="rules-screen" class="screen hidden">
+      <div class="bc-rules-wrapper">
+        <div class="bc-rules-header">
+          <h2>📜 Règles du Marécage — Bombercroack</h2>
+          <p class="bc-rules-subtitle">Affrontez d'autres grenouilles en ligne et soyez le dernier amphibien sur son nénuphar !</p>
+        </div>
+
+        <!-- 3 Blocs principaux de règles -->
+        <div class="bc-rules-grid">
+          <div class="bc-rule-card">
+            <h3>Objectif & Multijoueur</h3>
+            <ul>
+              <li>Chaque joueur contrôle sa grenouille depuis sa propre machine en temps réel.</li>
+              <li>Frayez-vous un chemin en détruisant les <strong>roseaux et caisses</strong> du marais.</li>
+              <li>Piégez vos adversaires avec vos explosions : le dernier survivant remporte la manche et grimpe dans le <strong>Scoreboard</strong> !</li>
+            </ul>
+          </div>
+
+          <div class="bc-rule-card">
+            <h3>Commandes de Base</h3>
+            <ul>
+              <li><strong>Se déplacer :</strong> <span class="bc-kbd">⬆️</span> <span class="bc-kbd">⬇️</span> <span class="bc-kbd">⬅️</span> <span class="bc-kbd">➡️</span> (ou <span class="bc-kbd">Z</span><span class="bc-kbd">Q</span><span class="bc-kbd">S</span><span class="bc-kbd">D</span>).</li>
+              <li><strong>Poser une nenuf-bombe :</strong> <span class="bc-kbd">Espace</span>.</li>
+              <li><strong>Esquive :</strong> Déplacez-vous vite hors de la croix d'explosion avant la détonation !</li>
+            </ul>
+          </div>
+
+          <div class="bc-rule-card">
+            <h3>Mécanique des Nenuf-Bombes</h3>
+            <ul>
+              <li>Une bombe explose après <strong>3 secondes</strong> en projetant une onde en croix (Haut, Bas, Gauche, Droite).</li>
+              <li>Les <strong>rochers moussus</strong> bloquent les flammes, tandis que les obstacles fragiles explosent.</li>
+              <li><strong>Réaction en chaîne :</strong> Une explosion déclenche instantanément les autres bombes touchées !</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Bonus / Power-ups -->
+        <h3 class="bc-powerups-title">Bonus cachés sous les roseaux</h3>
+        <div class="bc-powerups-row">
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">💣</div>
+            <div class="bc-powerup-info">
+              <strong>Nénuphar +1</strong>
+              <span>Permet de poser une nenuf-bombe supplémentaire simultanément.</span>
+            </div>
+          </div>
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">🔥</div>
+            <div class="bc-powerup-info">
+              <strong>Croassement Ardent</strong>
+              <span>Augmente la portée de vos explosions d'une case dans chaque direction.</span>
+            </div>
+          </div>
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">⚡</div>
+            <div class="bc-powerup-info">
+              <strong>Palmes Turbo</strong>
+              <span>Augmente la vitesse de déplacement de votre grenouille sur les nénuphars.</span>
+            </div>
+          </div>
+          <div class="bc-powerup-item">
+            <div class="bc-powerup-icon">🛡️</div>
+            <div class="bc-powerup-info">
+              <strong>Bulle Protectrice</strong>
+              <span>Encaisse une explosion à votre place avant d'éclater.</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Mini-arène interactive de démonstration -->
+        <div class="bc-demo-box">
+          <div class="bc-demo-info">
+            <h3>🐸 Zone d'entraînement rapide</h3>
+            <p id="bc-demo-status">Testez la pose d'une nenuf-bombe sur la mini-grille pour voir la détonation en croix et libérer un bonus !</p>
+            <div class="bc-demo-controls">
+              <button type="button" id="bc-btn-up" class="bc-demo-btn">⬆️</button>
+              <button type="button" id="bc-btn-down" class="bc-demo-btn">⬇️</button>
+              <button type="button" id="bc-btn-left" class="bc-demo-btn">⬅️</button>
+              <button type="button" id="bc-btn-right" class="bc-demo-btn">➡️</button>
+              <button type="button" id="bc-btn-bomb" class="bc-demo-btn">💣 Poser Bombe</button>
+              <button type="button" id="bc-btn-reset" class="bc-demo-btn">🔄 Réinitialiser</button>
+            </div>
+          </div>
+          <div id="bc-demo-grid" class="bc-demo-arena" aria-label="Mini-arène de démonstration"></div>
+        </div>
+      </div>
+
+      <div class="bc-rules-footer">
+        <button id="btn-back-from-rules" class="lilypad-btn">Retour au Menu</button>
+      </div>
+    </div>   
+
+    <script src="js/game/menu.js"></script> <!-- js pour gerer l'affichage des menus (sakina) -->
+    <script src="js/game/rules.js"></script> <!-- js pour la mini-arène des règles -->
+
+    <script src="js/game/map.js"></script>
+    <script src="js/game/game.js"></script>
+  </body>
+</html>

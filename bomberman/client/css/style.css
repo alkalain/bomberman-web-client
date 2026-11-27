@@ -6,3 +6,571 @@
 #game{
     width: 50%;
 }
+
+
+
+:root {
+    --water-bg: #112a22;
+    --water-surface: #1b4d3e;
+    --lilypad-green: #2d6a4f;
+    --lilypad-hover: #40916c;
+    --text-color: #ffffff;
+    --accent-yellow: #d4a373;
+    --font-main: 'Arial Rounded MT Bold', 'Comic Sans MS', sans-serif;
+}
+
+/* --- Styles Généraux --- */
+body {
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    font-family: var(--font-main);
+    background: radial-gradient(circle, var(--water-surface) 0%, var(--water-bg) 100%);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Gestion des écrans (masquer / afficher) */
+.hidden {
+    display: none !important;
+}
+
+.screen {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 20px;
+    box-sizing: border-box;
+
+    background-image: url('../img/fondmenu.webp'); 
+    background-repeat: no-repeat; 
+    background-position: center; 
+    background-size: cover;
+}
+
+
+.logo {
+  position: absolute;
+  top: 30px; 
+  width: 600px;
+  height: auto;
+  image-rendering: pixelated;
+}
+
+
+
+h2 {
+    color: #52b788;
+    font-size: 2.2rem;
+    text-shadow: 2px 2px 0px #081c15;
+    margin-bottom: 15px;
+}
+
+/* --- Formulaire de Saisie (Pseudo) --- */
+.player-setup {
+    margin-bottom: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+}
+
+.player-setup label {
+    font-size: 0.95rem;
+    color: #d8f3dc;
+}
+
+.player-setup input {
+    padding: 12px 20px;
+    border-radius: 25px;
+    border: 3px solid var(--lilypad-green);
+    background-color: #081c15;
+    color: white;
+    font-size: 1.1rem;
+    text-align: center;
+    outline: none;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.5);
+    transition: border-color 0.2s;
+}
+
+.player-setup input:focus {
+    border-color: #52b788;
+}
+
+/* --- Boutons Style Nénuphars --- */
+.lilypad-nav {
+    display: flex;
+    flex-direction: column;
+    /*gap: 15px;*/
+    width: 280px;
+}
+
+.lilypad-btn {
+    background-color: var(--lilypad-green);
+    border: 3px solid #1b4332;
+    border-radius: 35px;
+    padding: 14px 25px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+    box-shadow: 0 6px 0px #081c15;
+    text-align: center;
+}
+
+.lilypad-btn:hover {
+    background-color: var(--lilypad-hover);
+    transform: translateY(-3px);
+    box-shadow: 0 9px 0px #081c15;
+}
+
+.lilypad-btn:active {
+    transform: translateY(2px);
+    box-shadow: 0 3px 0px #081c15;
+}
+
+/* Bouton secondaire (ex: Quitter / Retour) */
+.secondary-btn {
+    margin-top: 15px;
+    background-color: #b7094c;
+    border-color: #890339;
+    box-shadow: 0 6px 0px #4a011d;
+}
+
+.secondary-btn:hover {
+    background-color: #c71585;
+    box-shadow: 0 9px 0px #4a011d;
+}
+
+.secondary-btn:active {
+    box-shadow: 0 3px 0px #4a011d;
+}
+
+/* --- Écran de Jeu (Canvas d'origine) --- */
+#game-screen {
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+#game-container {
+    background: #081c15;
+    padding: 15px;
+    border-radius: 12px;
+    border: 4px solid var(--lilypad-green);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+}
+
+/* --- Tableau des Scores (Scoreboard HTML / CSS / JS classique) --- */
+.scoreboard-table {
+    width: 80%;
+    max-width: 500px;
+    border-collapse: collapse;
+    background-color: rgba(8, 28, 21, 0.9);
+    border: 3px solid var(--lilypad-green);
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+}
+
+.scoreboard-table th, .scoreboard-table td {
+    padding: 12px 15px;
+    text-align: center;
+}
+
+.scoreboard-table th {
+    background-color: var(--lilypad-green);
+    color: #d8f3dc;
+    font-size: 1.1rem;
+    border-bottom: 2px solid #1b4332;
+}
+
+.scoreboard-table td {
+    border-bottom: 1px solid rgba(82, 183, 136, 0.2);
+    color: white;
+}
+
+.scoreboard-table tr:last-child td {
+    border-bottom: none;
+}
+
+/* --- Écran des Règles --- */
+#rules-screen p {
+    background-color: rgba(8, 28, 21, 0.8);
+    border: 2px solid var(--lilypad-green);
+    padding: 20px;
+    border-radius: 12px;
+    max-width: 450px;
+    text-align: center;
+    font-size: 1.05rem;
+    line-height: 1.5;
+}
+
+
+
+
+
+/* --- Sélection de Grenouilles --- */
+.character-selection {
+    margin: 15px 0 25px 0;
+    text-align: center;
+}
+
+.character-selection p {
+    margin-bottom: 10px;
+    color: #d8f3dc;
+    font-size: 1rem;
+}
+
+.frog-options {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.frog-choice {
+    background: #081c15;
+    border: 2px solid var(--lilypad-green);
+    color: white;
+    padding: 8px 15px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-family: var(--font-main);
+    transition: all 0.2s ease;
+}
+
+.frog-choice:hover {
+    border-color: #52b788;
+    transform: scale(1.05);
+}
+
+.frog-choice.active {
+    background: var(--lilypad-hover);
+    border-color: #ffffff;
+    color: #000;
+    font-weight: bold;
+    box-shadow: 0 0 10px rgba(112, 224, 0, 0.6);
+}
+
+
+
+/* Arrière-plan pour les grenouilles animées */
+#frogs-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none; /* Ne bloque pas les clics sur le menu */
+    overflow: hidden;
+    z-index: 0;
+}
+
+/* Style individuel de chaque grenouille en fond */
+.bg-frog {
+    position: absolute;
+    width: 48px;
+    height: 48px;
+    background-size: contain;
+    background-repeat: no-repeat;
+    transition: transform 0.1s linear;
+    opacity: 0.7; /* Légère transparence pour s'intégrer au décor */
+    filter: drop-shadow(0px 4px 6px rgba(0,0,0,0.4));
+}
+
+
+
+
+
+/* =========================================================
+   STYLES DE L'ÉCRAN DES RÈGLES (#rules-screen)
+   ========================================================= */
+#rules-screen {
+  overflow-y: auto;
+  padding: 24px 16px;
+  box-sizing: border-box;
+}
+
+.bc-rules-wrapper {
+  max-width: 920px;
+  margin: 0 auto 24px auto;
+  background: rgba(13, 38, 28, 0.92);
+  border: 3px solid #4ade80;
+  border-radius: 20px;
+  padding: 24px 28px;
+  color: #ecfdf5;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  text-align: left;
+  font-family: inherit;
+}
+
+.bc-rules-header {
+  text-align: center;
+  margin-bottom: 20px;
+  border-bottom: 1px dashed rgba(74, 222, 128, 0.35);
+  padding-bottom: 14px;
+}
+
+.bc-rules-header h2 {
+  margin: 0 0 8px 0;
+  font-size: 1.8rem;
+  color: #86efac;
+}
+
+.bc-rules-subtitle {
+  margin: 0;
+  font-size: 0.98rem;
+  color: #bbf7d0;
+}
+
+.bc-rules-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 16px;
+  margin-bottom: 22px;
+}
+
+.bc-rule-card {
+  background: rgba(6, 78, 59, 0.45);
+  border: 1px solid rgba(74, 222, 128, 0.35);
+  border-radius: 14px;
+  padding: 16px;
+}
+
+.bc-rule-card h3 {
+  margin: 0 0 10px 0;
+  font-size: 1.1rem;
+  color: #fde047;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bc-rule-card p,
+.bc-rule-card li {
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: #d1fae5;
+  margin: 0 0 6px 0;
+}
+
+.bc-rule-card ul {
+  padding-left: 18px;
+  margin: 0;
+}
+
+.bc-kbd {
+  display: inline-block;
+  background: #064e3b;
+  border: 1px solid #34d399;
+  border-bottom-width: 3px;
+  border-radius: 6px;
+  padding: 2px 7px;
+  font-family: monospace;
+  font-size: 0.85rem;
+  color: #ffffff;
+  font-weight: bold;
+}
+
+.bc-powerups-title {
+  margin: 0 0 12px 0;
+  font-size: 1.15rem;
+  color: #86efac;
+}
+
+.bc-powerups-row {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.bc-powerup-item {
+  background: rgba(15, 23, 42, 0.55);
+  border: 1px solid rgba(134, 239, 172, 0.25);
+  border-radius: 12px;
+  padding: 12px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.bc-powerup-icon {
+  font-size: 1.6rem;
+  line-height: 1;
+}
+
+.bc-powerup-info strong {
+  display: block;
+  color: #fef08a;
+  font-size: 0.95rem;
+  margin-bottom: 3px;
+}
+
+.bc-powerup-info span {
+  font-size: 0.84rem;
+  color: #a7f3d0;
+  line-height: 1.35;
+  display: block;
+}
+
+/* Mini-simulateur d'entraînement */
+.bc-demo-box {
+  background: rgba(4, 47, 46, 0.65);
+  border: 2px solid #2dd4bf;
+  border-radius: 16px;
+  padding: 16px;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.bc-demo-info {
+  flex: 1 1 260px;
+}
+
+.bc-demo-info h3 {
+  margin: 0 0 8px 0;
+  color: #5eead4;
+  font-size: 1.1rem;
+}
+
+.bc-demo-info p {
+  margin: 0 0 10px 0;
+  font-size: 0.9rem;
+  color: #ccfbf1;
+  line-height: 1.45;
+}
+
+.bc-demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.bc-demo-btn {
+  background: #0d9488;
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 12px;
+  font-size: 0.85rem;
+  font-weight: bold;
+  cursor: pointer;
+  transition: transform 0.1s, background 0.15s;
+}
+
+.bc-demo-btn:hover {
+  background: #14b8a6;
+  transform: translateY(-1px);
+}
+
+.bc-demo-arena {
+  display: grid;
+  grid-template-columns: repeat(7, 36px);
+  grid-template-rows: repeat(5, 36px);
+  gap: 3px;
+  background: #022c22;
+  padding: 8px;
+  border-radius: 12px;
+  border: 2px solid #10b981;
+  margin: 0 auto;
+}
+
+.bc-cell {
+  width: 36px;
+  height: 36px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.25rem;
+  user-select: none;
+  background: #065f46;
+}
+
+.bc-cell.rock {
+  background: #334155;
+  box-shadow: inset 0 -3px 0 #1e293b;
+}
+
+.bc-cell.reed {
+  background: #92400e;
+  box-shadow: inset 0 -3px 0 #78350f;
+}
+
+.bc-cell.flame {
+  background: #f97316;
+  box-shadow: 0 0 10px #fb923c;
+}
+
+.bc-rules-footer {
+  text-align: center;
+  margin-top: 12px;
+}
+
+/* Base commune à tous les boutons-images */
+.img-btn {
+  display: block;
+  border: none;
+  background-color: transparent;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+  cursor: pointer;
+  padding: 0;
+  /* masque le texte tout en le gardant lisible par les lecteurs d'écran */
+  font-size: 0;
+  color: transparent;
+  transition: transform 0.2s ease, filter 0.2s ease;
+  aspect-ratio: 640 / 290;
+}
+
+.img-btn:hover {
+  transform: translateY(-3px) scale(1.04);
+  filter: brightness(1.15);
+}
+
+.img-btn:active {
+  transform: translateY(2px) scale(0.98);
+}
+
+/* Une image par bouton : adapte les tailles à tes visuels */
+.btn-img-multi {
+  background-image: url('../img/cree.png');
+  width: 280px;
+}
+
+.btn-img-join {
+  background-image: url('../img/rejoindre.png');
+  width: 280px;
+  margin-bottom: -5%;
+}
+
+.btn-img-rules {
+  background-image: url('../img/regles.png');
+  width: 280px;
+}
+
+.btn-img-back {
+  background-image: url('../img/revenir.png');
+  width: 280px;
+  margin-top: -5%;
+}
+
+
+
+

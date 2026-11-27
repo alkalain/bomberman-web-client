@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bombercroack</title>
+    <link rel="stylesheet" href="css/style.css" />
+  </head>
+  <body>
+
+<!--
+    <h1>Bomberman</h1>
+    <p>Use the arrow keys to move and spacebar to place bombs.</p>
+    <div id="game-container">
+      <canvas id="game" width="792" height="500" style="border:1px solid black"></canvas>
+    </div>
+  -->
+
+    <!-- Éléments animés de fond -->
+    <div id="frogs-background"></div>
+
+    <!-- 1. ÉCRAN DU MENU PRINCIPAL -->
+    <div id="menu-screen" class="screen">
+      <h1 class="game-title">BOMBERCROACK</h1>
+
+      <!-- Navigation style nénuphars avec Multijoueur, Rejoindre et Règles -->
+      <div class="lilypad-nav">
+        <button id="btn-multi" class="lilypad-btn">Mode multijoueur</button>
+        <button id="btn-join" class="lilypad-btn">Rejoindre une Partie</button>
+        <button id="btn-rules" class="lilypad-btn">📜 Règles du Marécage</button>
+      </div>
+    </div>
+
+    <!-- 2. ÉCRAN DE PRÉPARATION (Choix du pseudo & Personnage) -->
+    <div id="setup-screen" class="screen hidden">
+      <h2 id="setup-title">Configuration de la Grenouille</h2>
+      
+      <div class="player-setup">
+        <label for="username">Nom de votre grenouille :</label>
+        <input type="text" id="username" placeholder="ex: Kro_Kro" maxlength="15" />
+      </div>
+
+      <!-- Sélection du personnage (Skin / Couleur) -->
+      <div class="character-selection">
+        <p>Choisissez votre Grenouille :</p>
+        <div class="frog-options">
+          <button class="frog-choice active" data-skin="green">🐸 Verte</button>
+          <button class="frog-choice" data-skin="blue">🔷 Bleue</button>
+          <button class="frog-choice" data-skin="red">🔴 Rouge</button>
+          <button class="frog-choice" data-skin="yellow">🟡 Dorée</button>
+        </div>
+      </div>
+
+      <button id="btn-start-game" class="lilypad-btn">Sauter dans l'Étang ! 🌊</button>
+      <button id="btn-back-setup" class="lilypad-btn secondary-btn">Retour</button>
+    </div>
+
+    <!-- 3. ÉCRAN DU JEU (Canvas d'origine) -->
+    <div id="game-screen" class="screen hidden">
+      <div id="game-container">
+        <canvas id="game" width="792" height="500" style="border:1px solid black"></canvas>
+      </div>
+      <button id="btn-back-menu" class="lilypad-btn secondary-btn">Quitter la partie</button>
+    </div>
+
+    <!-- 4. ÉCRAN DU TABLEAU DES SCORES (MongoDB obligatoire) -->
+    <div id="scoreboard-screen" class="screen hidden">
+      <h2>🏆 Meilleurs Croasseurs (Scoreboard)</h2>
+      <table class="scoreboard-table">
+        <thead>
+          <tr>
+            <th>Rang</th>
+            <th>Joueur</th>
+            <th>Victoires</th>
+          </tr>
+        </thead>
+        <tbody id="scoreboard-body">
+          <!-- Les scores MongoDB seront injectés ici -->
+        </tbody>
+      </table>
+      <button id="btn-back-from-scores" class="lilypad-btn">Retour au Menu</button>
+    </div>
+
+    <!-- 5. ÉCRAN DES RÈGLES -->
+    <div id="rules-screen" class="screen hidden">
+      <h2>📜 Règles du Jeu</h2>
+      <p>Utilisez les flèches directionnelles pour vous déplacer et la barre d'espace pour poser des nenuf-bombes !</p>
+      <button id="btn-back-from-rules" class="lilypad-btn">Retour au Menu</button>
+    </div>   
+
+    <script src="js/game/menu.js"></script> <!-- js pour gerer l'affichage des menus (sakina) -->
+
+    <script src="js/game/map.js"></script>
+    <script src="js/game/game.js"></script>
+  </body>
+</html>
+
+
